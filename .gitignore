@@ -1,0 +1,46 @@
+# KMM/Android/iOS/General ignores
+*.iml
+.kotlin
+.gradle
+**/build/
+xcuserdata
+!src/**/build/
+local.properties
+.idea
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+**/xcshareddata/WorkspaceSettings.xcsettings
+node_modules/
+
+# --- ADDITIONS START HERE ---
+
+# 1. Desktop / Compose Multiplatform Build Artifacts (Windows, macOS, Linux)
+# Folders created by the packaging tasks (e.g., .dmg, .exe generation)
+**/build/compose/
+# Application Bundles and Installers
+*.app/
+*.dmg
+*.exe
+
+# 2. Gradle Wrapper Metadata
+gradle/wrapper/gradle-wrapper.jar
+.gradle/
+
+# 3. IntelliJ/IDE Specific
+# Specific IDE files that can sometimes be created
+.idea/libraries/
+.idea/modules.xml
+.idea/vcs.xml
+# Windows-specific IML file
+.idea/modules.iml
+
+# 4. Standard OS/Miscellaneous
+Thumbs.db
+*.log
