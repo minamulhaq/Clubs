@@ -1,6 +1,7 @@
 package com.miuh.clubs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -21,11 +22,16 @@ fun App() {
             composable<HomeRoute> {
                 Column {
                     Text(text = "HomeRoute")
+                    Button(onClick = {
+                        navController.navigate(route = SettingsRoute)
+                    }) {
+                        Text("Click")
+                    }
                 }
             }
             composable<SettingsRoute> {
                 Column {
-                    Text(text = "HomeRoute")
+                    Text(text = "Settings Route")
                 }
             }
         }
