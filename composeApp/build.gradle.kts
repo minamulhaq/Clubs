@@ -56,8 +56,13 @@ kotlin {
             implementation(libs.koin.compose.viewmodel.navigation)
 
             api(libs.koin.annotations)
+            implementation(libs.bundles.ktor)
 
-            implementation(libs.ktor.client.core) // Kept one
+//            implementation(libs.ktor.client.core)
+//            implementation(libs.ktor.logging)
+//            implementation(libs.ktor.client.content.negotiation)
+//            implementation(libs.ktor.client.auth)
+//            implementation(libs.ktor.serialization.kotlinx.json)
 
 
         }
