@@ -36,6 +36,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation("androidx.compose.material:material-icons-extended") // Use extended for full set
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -58,13 +59,8 @@ kotlin {
             api(libs.koin.annotations)
             implementation(libs.bundles.ktor)
 
-//            implementation(libs.ktor.client.core)
-//            implementation(libs.ktor.logging)
-//            implementation(libs.ktor.client.content.negotiation)
-//            implementation(libs.ktor.client.auth)
-//            implementation(libs.ktor.serialization.kotlinx.json)
 
-
+            implementation(compose.materialIconsExtended)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

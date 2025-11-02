@@ -18,13 +18,15 @@ fun HomeScreen(
 ) {
 
     val clubs = viewModel.state.collectAsStateWithLifecycle()
-    Column {
-        Text(text = "HomeRoute")
-        Button(onClick = {
-            navigateTo(SettingsRoute)
-        }) {
-            Text("Click")
-        }
+    Column(
+        modifier,
+    ) {
+        Text(text = "Home Screen")
+//        Button(onClick = {
+//            navigateTo(SettingsRoute)
+//        }) {
+//            Text("Click")
+//        }
     }
 
 }
