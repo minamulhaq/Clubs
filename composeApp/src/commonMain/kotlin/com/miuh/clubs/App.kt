@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.miuh.clubs.navigation.HomeRoute
 import com.miuh.clubs.navigation.SettingsRoute
-import com.miuh.clubs.presentation.HomeScreen
+import com.miuh.clubs.presentation.screens.home_screen.HomeScreen
 import com.miuh.clubs.presentation.SettingsScreen
 import com.miuh.clubs.ui.ClubsTopBar
 import com.miuh.clubs.ui.navigationdrawer.navigationItems

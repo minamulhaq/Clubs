@@ -2,6 +2,7 @@ package com.miuh.clubs.core.di
 
 import com.miuh.clubs.core.data.HttpClientEngineFactory
 import com.miuh.clubs.core.data.KtorClubsRepository
+import com.miuh.clubs.core.data.clubs_json_data.Club
 import com.miuh.clubs.domain.ClubsRepository
 import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
 import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
@@ -56,7 +57,7 @@ class AppModule {
     fun top100Uc(repository: ClubsRepository) = GetTop100ClubsUseCase(repository)
 
     @KoinViewModel
-    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<List<String>>) =
+    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<List<Club>>) =
         ClubsViewModel(top100ClubsUseCase)
 
 }
