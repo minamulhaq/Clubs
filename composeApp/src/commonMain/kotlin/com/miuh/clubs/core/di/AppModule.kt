@@ -3,13 +3,19 @@ package com.miuh.clubs.core.di
 import com.miuh.clubs.core.data.HttpClientEngineFactory
 import com.miuh.clubs.core.data.KtorClubsRepository
 import com.miuh.clubs.domain.ClubsRepository
+import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
+import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
 import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.android.annotation.KoinViewModel
@@ -30,9 +36,12 @@ class AppModule {
                 json(
                     json = Json {
                         ignoreUnknownKeys = true
+                        prettyPrint = true
                     })
             }
-            install (Auth) {
+            install(Auth) {}
+            defaultRequest {
+                contentType(ContentType.Application.Json)
             }
         }
     }
@@ -43,8 +52,11 @@ class AppModule {
     @Factory(binds = [ClubsRepository::class])
     fun clubsRepository(httpClient: HttpClient) = KtorClubsRepository(httpClient)
 
+    @Single(binds = [NetworkingUseCase::class])
+    fun top100Uc(repository: ClubsRepository) = GetTop100ClubsUseCase(repository)
 
     @KoinViewModel
-    fun clubsViewModel(repository: ClubsRepository) = ClubsViewModel(repository)
+    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<List<String>>) =
+        ClubsViewModel(top100ClubsUseCase)
 
 }

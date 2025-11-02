@@ -1,20 +1,49 @@
 package com.miuh.clubs.core.data
 
+import com.miuh.clubs.core.util.Error
+import com.miuh.clubs.core.util.Result
 import com.miuh.clubs.domain.ClubsRepository
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 
 class KtorClubsRepository(
-    private val httpClient: HttpClient
+    val httpClient: HttpClient
 ) : ClubsRepository {
     override suspend fun searchClubs(): List<String> {
+        when (val r: Result<String, Error> = getTop100()) {
+            is Result.Error<*> -> println("\n\n\n${r.error}\n\n\n")
+            is Result.Success<*> -> println("\n\n\n${r.data}\n\n\n")
+        }
         return (1..10).map {
             "Club: $it"
         }
     }
 
+    suspend inline fun <reified R : Any> getTop100(
+        route: String = "", parameters: Map<String, Any> = emptyMap()
+    ): Result<R, Error> {
+        return NetworkResponseParser().safeCall<R> {
+            var url = ClubsApi.buildUrl(
+                gameType = GameType.GEN5,
+                leaderboardType = LeaderboardType.ALL_TIME,
+                searchClubName = "gulagis"
+            )
+
+            url = ClubsApi.buildClubInfoUrl(
+                gameType = GameType.GEN5, clubIds = listOf(490431)
+            )
+
+            url = ClubsApi.buildClubOverallStatsUrl(
+                gameType = GameType.GEN5, clubIds = listOf(490431)
+            )
+
+            url = ClubsApi.buildClubMembersStatsUrl(
+                gameType = GameType.GEN5, clubId = 490431
+            )
+            httpClient.get(url)
+        }
+    }
 }
-
-
 
 
 /*
