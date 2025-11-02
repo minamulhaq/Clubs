@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.miuh.clubs.navigation.HomeRoute
 import com.miuh.clubs.navigation.SettingsRoute
+import com.miuh.clubs.presentation.HomeScreen
 import com.miuh.clubs.ui.theme.ClubsTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -20,14 +21,9 @@ fun App() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = HomeRoute) {
             composable<HomeRoute> {
-                Column {
-                    Text(text = "HomeRoute")
-                    Button(onClick = {
-                        navController.navigate(route = SettingsRoute)
-                    }) {
-                        Text("Click")
-                    }
-                }
+                HomeScreen(navigateTo = {
+                    navController.navigate(it)
+                })
             }
             composable<SettingsRoute> {
                 Column {
