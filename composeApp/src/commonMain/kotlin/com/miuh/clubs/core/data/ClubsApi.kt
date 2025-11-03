@@ -8,7 +8,7 @@ enum class MatchType(val param: String) {
     LEAGUE("leagueMatch"), PLAYOFF("playoffMatch")
 }
 
-enum class GameType {
+enum class GenType {
     GEN5, GEN4, NX;
 
     fun platformParam(): String = when (this) {
@@ -38,19 +38,19 @@ object ClubsApi {
      * unified builder for leaderboard + search
      */
     fun buildUrlTop100(
-        gameType: GameType, leaderboardType: LeaderboardType
+        genType: GenType, leaderboardType: LeaderboardType
     ): String {
         return URLBuilder().apply {
             // base domain
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + leaderboardType.urlSegment
-            parameters.append(PLATFORM_QUERY, gameType.platformParam())
+            parameters.append(PLATFORM_QUERY, genType.platformParam())
 
         }.buildString()
     }
 
     fun buildUrlClubSearch(
-        gameType: GameType, leaderboardType: LeaderboardType, searchClubName: String? = null
+        genType: GenType, leaderboardType: LeaderboardType, searchClubName: String? = null
     ): String {
         return URLBuilder().apply {
             // base domain
@@ -61,7 +61,7 @@ object ClubsApi {
                 BASE_PATH + leaderboardType.urlSegment + if (searchClubName != null) "/search" else ""
 
             // always add platform
-            parameters.append(PLATFORM_QUERY, gameType.platformParam())
+            parameters.append(PLATFORM_QUERY, genType.platformParam())
 
             // optional search club name
             searchClubName?.let { name ->
@@ -72,70 +72,70 @@ object ClubsApi {
 
 
     fun buildClubInfoUrl(
-        gameType: GameType, clubIds: List<Long>
+        genType: GenType, clubIds: List<Long>
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "clubs/info"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubIds", clubIds.joinToString(","))
         }.buildString()
     }
 
 
     fun buildClubOverallStatsUrl(
-        gameType: GameType, clubIds: List<Long>
+        genType: GenType, clubIds: List<Long>
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "clubs/overallStats"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubIds", clubIds.joinToString(","))
         }.buildString()
     }
 
 
     fun buildClubPlayoffAchievementsUrl(
-        gameType: GameType, clubId: Long
+        genType: GenType, clubId: Long
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "club/playoffAchievements"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubId", clubId.toString())
         }.buildString()
     }
 
 
     fun buildClubMembersCareerStatsUrl(
-        gameType: GameType, clubId: Long
+        genType: GenType, clubId: Long
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "members/career/stats"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubId", clubId.toString())
         }.buildString()
     }
 
     fun buildClubMembersStatsUrl(
-        gameType: GameType, clubId: Long
+        genType: GenType, clubId: Long
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "members/stats"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubId", clubId.toString())
         }.buildString()
     }
 
     fun buildClubMatchesUrl(
-        gameType: GameType, clubIds: List<Long>, matchType: String, maxResultCount: Int = 1
+        genType: GenType, clubIds: List<Long>, matchType: String, maxResultCount: Int = 1
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "clubs/matches"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubIds", clubIds.joinToString(","))
             parameters.append("matchType", matchType)
             parameters.append("maxResultCount", maxResultCount.toString())
@@ -144,12 +144,12 @@ object ClubsApi {
 
 
     fun buildClubMatchesUrl(
-        gameType: GameType, clubIds: List<Long>, matchType: MatchType, maxResultCount: Int = 1
+        genType: GenType, clubIds: List<Long>, matchType: MatchType, maxResultCount: Int = 1
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
             encodedPath = BASE_PATH + "clubs/matches"
-            parameters.append("platform", gameType.platformParam())
+            parameters.append("platform", genType.platformParam())
             parameters.append("clubIds", clubIds.joinToString(","))
             parameters.append("matchType", matchType.param)
             parameters.append("maxResultCount", maxResultCount.toString())

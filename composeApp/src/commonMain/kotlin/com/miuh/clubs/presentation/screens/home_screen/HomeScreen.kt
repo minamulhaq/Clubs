@@ -24,7 +24,8 @@ import com.miuh.clubs.navigation.Routes
 import com.miuh.clubs.presentation.ClubsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.LaunchedEffect
+import com.miuh.clubs.core.data.GenType
+import com.miuh.clubs.core.data.LeaderboardType
 
 
 @Composable
@@ -38,6 +39,13 @@ fun HomeScreen(
         mutableStateOf(0)
     }
 
+    var currentGenType by rememberSaveable {
+        mutableStateOf(GenType.GEN5)
+    }
+
+    var currentLeaderboardType by rememberSaveable {
+        mutableStateOf(LeaderboardType.ALL_TIME)
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -60,7 +68,13 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         selectedButtonIndex = index
-                        viewModel.onEvent(HomeScreenEvent.GetClubsListEvent(button.filter))
+                        currentGenType = button.genType
+                        viewModel.onEvent(
+                            HomeScreenEvent.GetTop100ClubsListEvent(
+                                currentGenType,
+                                currentLeaderboardType
+                            )
+                        )
                     }, modifier = Modifier.weight(1f), colors = buttonColors
                 ) {
                     Text(
@@ -71,7 +85,17 @@ fun HomeScreen(
         }
         SearchFilterRow(clubSearchByName = {
             viewModel.onEvent(HomeScreenEvent.SearchClubByNameEvent(it))
-        })
+        }, onLeaderBoardChanged = {
+            currentLeaderboardType = it
+            viewModel.onEvent(
+                HomeScreenEvent.GetTop100ClubsListEvent(
+                    currentGenType,
+                    currentLeaderboardType
+                )
+            )
+        }
+
+        )
         LazyColumn(
             modifier = Modifier.fillMaxWidth().weight(1f) // Use weight to fill remaining space
         ) {

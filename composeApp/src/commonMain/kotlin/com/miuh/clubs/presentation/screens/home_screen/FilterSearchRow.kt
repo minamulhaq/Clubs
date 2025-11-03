@@ -23,15 +23,11 @@ import androidx.compose.ui.unit.sp
 import com.miuh.clubs.core.data.LeaderboardType
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-//enum class TimeFilterTab {
-//    ALL_TIME, CURRENT_SEASON
-//}
-//
-
 @Composable
 fun SearchFilterRow(
     modifier: Modifier = Modifier,
-    clubSearchByName: (String) -> Unit
+    clubSearchByName: (String) -> Unit,
+    onLeaderBoardChanged: (LeaderboardType) -> Unit
 ) {
     var selectedTabIndex by rememberSaveable { mutableStateOf(LeaderboardType.ALL_TIME.ordinal) }
     val searchText = mutableStateOf("")
@@ -45,6 +41,7 @@ fun SearchFilterRow(
                 selected = selectedTabIndex == index,
                 onClick = {
                     selectedTabIndex = index
+                    onLeaderBoardChanged(destination)
                 },
                 text = {
                     Text(
@@ -88,5 +85,5 @@ fun SearchFilterRow(
 @Preview(showBackground = true)
 @Composable
 private fun TabNavigationPreview() {
-    SearchFilterRow(clubSearchByName = {})
+    SearchFilterRow(clubSearchByName = {}, onLeaderBoardChanged = {})
 }

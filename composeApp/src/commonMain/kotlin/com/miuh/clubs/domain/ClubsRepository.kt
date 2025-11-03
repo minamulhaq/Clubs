@@ -1,12 +1,11 @@
 package com.miuh.clubs.domain
 
-import com.miuh.clubs.core.data.GameType
+import com.miuh.clubs.core.data.GenType
+import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
-import com.miuh.clubs.core.util.Error
-import com.miuh.clubs.core.util.Result
 
 
 interface ClubsRepository {
-    suspend fun getTop100(genType: GameType): List<ClubSchemaTop100>
+    suspend fun getTop100(genType: GenType, leaderboardType: LeaderboardType): List<ClubSchemaTop100>
 
 }

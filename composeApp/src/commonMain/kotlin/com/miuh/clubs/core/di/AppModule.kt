@@ -1,8 +1,9 @@
 package com.miuh.clubs.core.di
 
-import com.miuh.clubs.core.data.GameType
+import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.HttpClientEngineFactory
 import com.miuh.clubs.core.data.KtorClubsRepository
+import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.ClubsRepository
 import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
@@ -15,7 +16,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -58,7 +58,7 @@ class AppModule {
     fun top100Uc(repository: ClubsRepository) = GetTop100ClubsUseCase(repository)
 
     @KoinViewModel
-    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<GameType, List<ClubSchemaTop100>>) =
+    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, List<ClubSchemaTop100>>) =
         ClubsViewModel(top100ClubsUseCase)
 
 }

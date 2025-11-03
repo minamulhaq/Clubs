@@ -12,8 +12,8 @@ import kotlinx.serialization.json.Json
 class KtorClubsRepository(
     val httpClient: HttpClient
 ) : ClubsRepository {
-    override suspend fun getTop100(genType: GameType): List<ClubSchemaTop100> {
-        when (val r: Result<String, Error> = getTop100Clubs(genType = genType)) {
+    override suspend fun getTop100(genType: GenType, leaderboardType: LeaderboardType): List<ClubSchemaTop100> {
+        when (val r: Result<String, Error> = getTop100Clubs(genType = genType, leaderboardType = leaderboardType)) {
             is Result.Error<*> -> {
                 println("ERROR searchClubs\n\n\n${r.error}\n\n\n")
                 return emptyList()
@@ -34,26 +34,27 @@ class KtorClubsRepository(
     }
 
     suspend inline fun <reified R : Any> getTop100Clubs(
-        genType: GameType
+        genType: GenType,
+        leaderboardType: LeaderboardType
     ): Result<R, Error> {
         return NetworkResponseParser().safeCall<R> {
             var url = ClubsApi.buildUrlTop100(
-                gameType = genType,
-                leaderboardType = LeaderboardType.ALL_TIME,
+                genType = genType,
+                leaderboardType = leaderboardType
 //                searchClubName = "gulagis"
             )
             println("URL is: $url")
 
 //            url = ClubsApi.buildClubInfoUrl(
-//                gameType = GameType.GEN5, clubIds = listOf(490431)
+//                genType = GenType.GEN5, clubIds = listOf(490431)
 //            )
 //
 //            url = ClubsApi.buildClubOverallStatsUrl(
-//                gameType = GameType.GEN5, clubIds = listOf(490431)
+//                genType = GenType.GEN5, clubIds = listOf(490431)
 //            )
 //
 //            url = ClubsApi.buildClubMembersStatsUrl(
-//                gameType = GameType.GEN5, clubId = 490431
+//                genType = GenType.GEN5, clubId = 490431
 //            )
             httpClient.get(url)
         }
