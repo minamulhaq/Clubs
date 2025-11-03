@@ -20,26 +20,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miuh.clubs.core.data.LeaderboardType
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-enum class TimeFilterTab {
-    ALL_TIME, CURRENT_SEASON
-}
-
+//enum class TimeFilterTab {
+//    ALL_TIME, CURRENT_SEASON
+//}
+//
 
 @Composable
 fun SearchFilterRow(
     modifier: Modifier = Modifier,
     clubSearchByName: (String) -> Unit
 ) {
-    var selectedTabIndex by rememberSaveable { mutableStateOf(TimeFilterTab.ALL_TIME.ordinal) }
+    var selectedTabIndex by rememberSaveable { mutableStateOf(LeaderboardType.ALL_TIME.ordinal) }
     val searchText = mutableStateOf("")
 
     PrimaryTabRow(
         selectedTabIndex = selectedTabIndex,
         modifier = modifier.height(84.dp)
     ) {
-        TimeFilterTab.entries.forEachIndexed { index, destination ->
+        LeaderboardType.entries.forEachIndexed { index, destination ->
             Tab(
                 selected = selectedTabIndex == index,
                 onClick = {
@@ -47,12 +48,11 @@ fun SearchFilterRow(
                 },
                 text = {
                     Text(
-                        text = destination.name,
+                        text = destination.displayString,
                     )
                 }
             )
         }
-
 
         OutlinedTextField(
             modifier = Modifier,

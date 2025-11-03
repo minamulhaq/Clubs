@@ -18,9 +18,11 @@ enum class GameType {
     }
 }
 
-
-enum class LeaderboardType(val segment: String) {
-    ALL_TIME("allTimeLeaderboard"), CURRENT_SEASON("currentSeasonLeaderboard")
+enum class LeaderboardType(val urlSegment: String, val displayString: String) {
+    ALL_TIME("allTimeLeaderboard", "All Time"), CURRENT_SEASON(
+        "currentSeasonLeaderboard",
+        "Current Season"
+    )
 }
 
 object ClubsApi {
@@ -41,7 +43,7 @@ object ClubsApi {
         return URLBuilder().apply {
             // base domain
             takeFrom(BASE_URL)
-            encodedPath = BASE_PATH + leaderboardType.segment
+            encodedPath = BASE_PATH + leaderboardType.urlSegment
             parameters.append(PLATFORM_QUERY, gameType.platformParam())
 
         }.buildString()
@@ -56,7 +58,7 @@ object ClubsApi {
 
             // safe prefix composition, avoid double slash bugs
             encodedPath =
-                BASE_PATH + leaderboardType.segment + if (searchClubName != null) "/search" else ""
+                BASE_PATH + leaderboardType.urlSegment + if (searchClubName != null) "/search" else ""
 
             // always add platform
             parameters.append(PLATFORM_QUERY, gameType.platformParam())

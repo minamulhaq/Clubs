@@ -12,8 +12,8 @@ import kotlinx.serialization.json.Json
 class KtorClubsRepository(
     val httpClient: HttpClient
 ) : ClubsRepository {
-    override suspend fun searchClubs(): List<ClubSchemaTop100> {
-        when (val r: Result<String, Error> = getTop100()) {
+    override suspend fun getTop100(genType: GameType): List<ClubSchemaTop100> {
+        when (val r: Result<String, Error> = getTop100Clubs(genType = genType)) {
             is Result.Error<*> -> {
                 println("ERROR searchClubs\n\n\n${r.error}\n\n\n")
                 return emptyList()
@@ -33,12 +33,12 @@ class KtorClubsRepository(
         }
     }
 
-    suspend inline fun <reified R : Any> getTop100(
-        route: String = "", parameters: Map<String, Any> = emptyMap()
+    suspend inline fun <reified R : Any> getTop100Clubs(
+        genType: GameType
     ): Result<R, Error> {
         return NetworkResponseParser().safeCall<R> {
             var url = ClubsApi.buildUrlTop100(
-                gameType = GameType.GEN5,
+                gameType = genType,
                 leaderboardType = LeaderboardType.ALL_TIME,
 //                searchClubName = "gulagis"
             )

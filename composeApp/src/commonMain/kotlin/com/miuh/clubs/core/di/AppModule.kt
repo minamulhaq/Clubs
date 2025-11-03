@@ -1,5 +1,6 @@
 package com.miuh.clubs.core.di
 
+import com.miuh.clubs.core.data.GameType
 import com.miuh.clubs.core.data.HttpClientEngineFactory
 import com.miuh.clubs.core.data.KtorClubsRepository
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
@@ -57,7 +58,7 @@ class AppModule {
     fun top100Uc(repository: ClubsRepository) = GetTop100ClubsUseCase(repository)
 
     @KoinViewModel
-    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<List<ClubSchemaTop100>>) =
+    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<GameType, List<ClubSchemaTop100>>) =
         ClubsViewModel(top100ClubsUseCase)
 
 }

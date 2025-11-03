@@ -12,10 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ClubsViewModel(
-    private val top100uc: NetworkingUseCase<List<ClubSchemaTop100>>
+    private val top100uc: NetworkingUseCase<GameType, List<ClubSchemaTop100>>
 ) : ViewModel() {
-
-    private val _clubSerachText = mutableStateOf("")
 
     private val _currentlySelectedGen = mutableStateOf(GameType.GEN5)
     private val _clubs = MutableStateFlow(emptyList<ClubSchemaTop100>())
@@ -28,7 +26,7 @@ class ClubsViewModel(
     private fun getClubs() {
         viewModelScope.launch {
             _clubs.value = emptyList()
-            _clubs.value = top100uc()
+            _clubs.value = top100uc(param = _currentlySelectedGen.value)
         }
     }
 
@@ -36,11 +34,11 @@ class ClubsViewModel(
         when (event) {
             is HomeScreenEvent.GetClubsListEvent -> {
                 _currentlySelectedGen.value = event.gameType
-                println("Currently selected gen : ${_currentlySelectedGen.value}")
+                getClubs()
             }
 
             is HomeScreenEvent.SearchClubByNameEvent -> {
-                println("Searching for club ${event.clubName}")
+                println("Searching for club $event.")
             }
         }
 
