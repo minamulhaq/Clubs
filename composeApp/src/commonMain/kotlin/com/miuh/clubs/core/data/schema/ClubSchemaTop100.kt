@@ -26,3 +26,11 @@ data class ClubSchemaTop100(
     val ties: String,
     val wins: String
 )
+
+fun ClubSchemaTop100.toDisplayData(): ClubDisplayListData {
+    return ClubDisplayListData(
+        clubId = this.clubId,
+        clubInfo = this.clubInfo,
+        clubName = this.clubName
+    )
+}

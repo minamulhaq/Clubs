@@ -1,19 +1,26 @@
 package com.miuh.clubs.core.data
 
+import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.core.util.Error
 import com.miuh.clubs.core.util.Result
 import com.miuh.clubs.domain.ClubsRepository
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.util.reflect.TypeInfo
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import kotlin.reflect.typeOf
 
 class KtorClubsRepository(
     val httpClient: HttpClient
 ) : ClubsRepository {
-    override suspend fun getTop100(genType: GenType, leaderboardType: LeaderboardType): List<ClubSchemaTop100> {
-        when (val r: Result<String, Error> = getTop100Clubs(genType = genType, leaderboardType = leaderboardType)) {
+    override suspend fun getTop100(
+        genType: GenType, leaderboardType: LeaderboardType, clubName: String?
+    ): List<ClubSchemaTop100> {
+        when (val r: Result<String, Error> =
+            getTop100Clubs(genType = genType, leaderboardType = leaderboardType)) {
             is Result.Error<*> -> {
                 println("ERROR searchClubs\n\n\n${r.error}\n\n\n")
                 return emptyList()
@@ -33,15 +40,45 @@ class KtorClubsRepository(
         }
     }
 
+
+    // Algorithm Name: Generics Type Resolution
+// UseCase: Casting a result data type when using a type-safe wrapper (like Result).
+
+    override suspend fun searchClubByName(
+        genType: GenType, leaderboardType: LeaderboardType, name: String?
+    ): List<ClubSchemaSearchByName> {
+
+        if (name.isNullOrBlank()) {
+            return emptyList()
+        }
+
+        // A: The r variable is typed as Result<List<ClubSchemaSearchByName>>
+        val r = NetworkResponseParser().safeCall<List<ClubSchemaSearchByName>> {
+            val url = ClubsApi.buildUrl(
+                genType = genType, leaderboardType = leaderboardType, searchClubName = name
+            )
+            println("URL is: $url")
+            httpClient.get(url).body()
+        }
+
+        when (r) {
+            is Result.Error<*> -> {
+                println("SearchClubByName Error: ${r.error}")
+            }
+
+            is Result.Success<List<ClubSchemaSearchByName>> -> {
+                return r.data
+            }
+        }
+        return emptyList()
+    }
+
     suspend inline fun <reified R : Any> getTop100Clubs(
-        genType: GenType,
-        leaderboardType: LeaderboardType
+        genType: GenType, leaderboardType: LeaderboardType
     ): Result<R, Error> {
         return NetworkResponseParser().safeCall<R> {
-            var url = ClubsApi.buildUrlTop100(
-                genType = genType,
-                leaderboardType = leaderboardType
-//                searchClubName = "gulagis"
+            var url = ClubsApi.buildUrl(
+                genType = genType, leaderboardType = leaderboardType, searchClubName = null
             )
             println("URL is: $url")
 

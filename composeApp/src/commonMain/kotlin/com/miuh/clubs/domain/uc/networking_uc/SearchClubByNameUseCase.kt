@@ -2,17 +2,18 @@ package com.miuh.clubs.domain.uc.networking_uc
 
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.ClubsRepository
 
-class GetTop100ClubsUseCase(
+class SearchClubByNameUseCase(
     private val repository: ClubsRepository
-) : NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaTop100>> {
+) : NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaSearchByName>> {
     override suspend fun invoke(
         genType: GenType,
         leaderboardType: LeaderboardType,
         clubName: String?
-    ): List<ClubSchemaTop100> {
-        return repository.getTop100(genType, leaderboardType, clubName)
+    ): List<ClubSchemaSearchByName> {
+        return repository.searchClubByName(genType, leaderboardType, clubName)
     }
 }

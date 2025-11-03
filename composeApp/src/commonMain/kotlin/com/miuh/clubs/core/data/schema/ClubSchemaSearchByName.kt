@@ -23,3 +23,12 @@ data class ClubSchemaSearchByName(
     val ties: String,
     val wins: String
 )
+
+
+fun ClubSchemaSearchByName.toDisplayData(): ClubDisplayListData {
+    return ClubDisplayListData(
+        clubId = this.clubId,
+        clubInfo = this.clubInfo,
+        clubName = this.clubName
+    )
+}

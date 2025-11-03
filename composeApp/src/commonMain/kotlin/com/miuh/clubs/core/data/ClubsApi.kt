@@ -31,25 +31,8 @@ object ClubsApi {
     const val PLATFORM_QUERY = "platform"
     const val CLUB_NAME_QUERY = "clubName"
 
-    /**
-     * Build leaderboard endpoint URL with correct prefix composition
-     */
-    /**
-     * unified builder for leaderboard + search
-     */
-    fun buildUrlTop100(
-        genType: GenType, leaderboardType: LeaderboardType
-    ): String {
-        return URLBuilder().apply {
-            // base domain
-            takeFrom(BASE_URL)
-            encodedPath = BASE_PATH + leaderboardType.urlSegment
-            parameters.append(PLATFORM_QUERY, genType.platformParam())
 
-        }.buildString()
-    }
-
-    fun buildUrlClubSearch(
+    fun buildUrl(
         genType: GenType, leaderboardType: LeaderboardType, searchClubName: String? = null
     ): String {
         return URLBuilder().apply {

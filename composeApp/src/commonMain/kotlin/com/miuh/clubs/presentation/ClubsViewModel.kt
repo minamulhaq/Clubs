@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.schema.ClubDisplayListData
+import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
+import com.miuh.clubs.core.data.schema.toDisplayData
 import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
 import com.miuh.clubs.presentation.screens.home_screen.HomeScreenEvent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,12 +16,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ClubsViewModel(
-    private val top100uc: NetworkingUseCase<GenType, LeaderboardType, List<ClubSchemaTop100>>
+    private val top100uc: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
+    private val searchClubUc: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>
 ) : ViewModel() {
 
     private val _currentlySelectedGen = mutableStateOf(GenType.GEN5)
     private val _currentlySelectedLeaderBoard = mutableStateOf(LeaderboardType.ALL_TIME)
-    private val _clubs = MutableStateFlow(emptyList<ClubSchemaTop100>())
+    private val _clubs = MutableStateFlow(emptyList<ClubDisplayListData>())
     val clubs = _clubs.asStateFlow()
 
     init {
@@ -28,7 +32,27 @@ class ClubsViewModel(
     private fun getClubs() {
         viewModelScope.launch {
             _clubs.value = emptyList()
-            _clubs.value = top100uc(genType = _currentlySelectedGen.value, leaderboardType = _currentlySelectedLeaderBoard.value )
+            _clubs.value = top100uc(
+                genType = _currentlySelectedGen.value,
+                leaderboardType = _currentlySelectedLeaderBoard.value,
+                null
+            ).map {
+                it.toDisplayData()
+            }
+        }
+    }
+
+    private fun searchClubByName(clubName: String) {
+        viewModelScope.launch {
+            _clubs.value = emptyList()
+            _clubs.value =
+                searchClubUc(
+                    genType = _currentlySelectedGen.value,
+                    leaderboardType = _currentlySelectedLeaderBoard.value,
+                    clubName = clubName.trim()
+                ).map { it ->
+                    it.toDisplayData()
+                }
         }
     }
 
@@ -41,7 +65,7 @@ class ClubsViewModel(
             }
 
             is HomeScreenEvent.SearchClubByNameEvent -> {
-                println("Searching for club $event.")
+                searchClubByName(event.clubName)
             }
         }
 

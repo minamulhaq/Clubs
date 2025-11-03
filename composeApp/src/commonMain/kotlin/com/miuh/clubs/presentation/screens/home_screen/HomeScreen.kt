@@ -94,16 +94,27 @@ fun HomeScreen(
                 )
             )
         }
-
         )
+
         LazyColumn(
             modifier = Modifier.fillMaxWidth().weight(1f) // Use weight to fill remaining space
         ) {
             items(items = clubs.value, key = { it.clubId }) { club ->
-                Text(
-                    text = club.clubName,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                Row {
+                    Text(
+                        text = club.clubName,
+                        modifier = Modifier.fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    Text(
+                        text = club.clubId,
+                        modifier = Modifier.fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+
+                }
             }
         }
 

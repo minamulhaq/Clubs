@@ -4,10 +4,12 @@ import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.HttpClientEngineFactory
 import com.miuh.clubs.core.data.KtorClubsRepository
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.ClubsRepository
 import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
 import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
+import com.miuh.clubs.domain.uc.networking_uc.SearchClubByNameUseCase
 import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -23,6 +25,7 @@ import kotlinx.serialization.json.Json
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 @Module
@@ -55,10 +58,24 @@ class AppModule {
     fun clubsRepository(httpClient: HttpClient) = KtorClubsRepository(httpClient)
 
     @Single(binds = [NetworkingUseCase::class])
+    @Top100ClubsUc
     fun top100Uc(repository: ClubsRepository) = GetTop100ClubsUseCase(repository)
 
-    @KoinViewModel
-    fun clubsViewModel(top100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, List<ClubSchemaTop100>>) =
-        ClubsViewModel(top100ClubsUseCase)
+    @Single(binds = [NetworkingUseCase::class])
+    @SearchClubByName
+    fun searchClubByName(repository: ClubsRepository) = SearchClubByNameUseCase(repository)
 
+    @KoinViewModel
+    fun clubsViewModel(
+        @Top100ClubsUc top100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
+        @SearchClubByName searchClubByNameUseCase: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
+    ) =
+        ClubsViewModel(top100ClubsUseCase, searchClubByNameUseCase)
 }
+
+
+@Named
+annotation class Top100ClubsUc
+
+@Named
+annotation class SearchClubByName
