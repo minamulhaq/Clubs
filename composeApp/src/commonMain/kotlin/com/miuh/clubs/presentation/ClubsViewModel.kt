@@ -15,6 +15,8 @@ class ClubsViewModel(
     private val top100uc: NetworkingUseCase<List<ClubSchemaTop100>>
 ) : ViewModel() {
 
+    private val _clubSerachText = mutableStateOf("")
+
     private val _currentlySelectedGen = mutableStateOf(GameType.GEN5)
     private val _clubs = MutableStateFlow(emptyList<ClubSchemaTop100>())
     val clubs = _clubs.asStateFlow()
@@ -35,6 +37,10 @@ class ClubsViewModel(
             is HomeScreenEvent.GetClubsListEvent -> {
                 _currentlySelectedGen.value = event.gameType
                 println("Currently selected gen : ${_currentlySelectedGen.value}")
+            }
+
+            is HomeScreenEvent.SearchClubByNameEvent -> {
+                println("Searching for club ${event.clubName}")
             }
         }
 

@@ -24,6 +24,7 @@ import com.miuh.clubs.navigation.Routes
 import com.miuh.clubs.presentation.ClubsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 
 
 @Composable
@@ -36,6 +37,7 @@ fun HomeScreen(
     var selectedButtonIndex by rememberSaveable {
         mutableStateOf(0)
     }
+
 
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -67,6 +69,9 @@ fun HomeScreen(
                 }
             }
         }
+        SearchFilterRow(clubSearchByName = {
+            viewModel.onEvent(HomeScreenEvent.SearchClubByNameEvent(it))
+        })
         LazyColumn(
             modifier = Modifier.fillMaxWidth().weight(1f) // Use weight to fill remaining space
         ) {
