@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Divider
@@ -30,67 +33,66 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miuh.clubs.core.data.schema.ClubDisplayListData
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun StaticLeaderboardTableHeader() {
+fun StaticLeaderboardTableHeader(
+    modifier: Modifier = Modifier
+) {
     val headerTitles = listOf(
-        "Ranks", "Crest", "Club Name", "Skill Rating",
-        "Reputation", "Highest Division", "Matches Played"
+        "Ranks",
+        "Crest",
+        "Club Name",
+        "Skill Rating",
+        "Reputation",
+        "Highest Division",
+        "Matches Played"
     )
 
-    // Outer Row for the entire header with a light background to provide context
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-//            .background(Color(0xFFE0E0E0)) // Light gray background
-            .padding(vertical = 4.dp)
+        modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
     ) {
-        // Inner Row for the green columns
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background) // Bright Green background
-        ) {
-            headerTitles.forEachIndexed { index, title ->
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        // Adjust weight for "Club Name" (index 2) to be wider, as often seen in lists
-                        .background(MaterialTheme.colorScheme.onPrimaryContainer)
-                        // Apply white border to the left side of every column except the first
-                        // This creates the visual effect of white vertical lines between columns.
-                        .border(
-                            width = 1.dp,
-                            color = if (index > 0) Color.White else Color.Transparent,
-                            shape = RectangleShape
-                        )
-                        .padding(horizontal = 4.dp, vertical = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = title,
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+        headerTitles.forEachIndexed { index, title ->
+            Box(
+                modifier = Modifier.weight(1f)
+                    .background(MaterialTheme.colorScheme.onPrimaryContainer).border(
+                        width = 1.dp,
+                        color = if (index > 0) Color.White else Color.Transparent,
+                        shape = RectangleShape
+                    ).padding(horizontal = 4.dp, vertical = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = title,
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 8.sp,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
+
 }
 
+@Preview
 @Composable
 fun ClubsDisplayListBlock(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier, clubs: List<ClubDisplayListData>
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        StaticLeaderboardTableHeader()
+    StaticLeaderboardTableHeader(modifier = modifier)
+    LazyColumn {
+        clubs
+        items(clubs) {
+            SingleClubDisplayRow(club = it, onClubClicked = {
+                println("Clicked club: ${it.clubName}")
 
+            })
+            Spacer(modifier = modifier.height(10.dp))
+        }
     }
 }

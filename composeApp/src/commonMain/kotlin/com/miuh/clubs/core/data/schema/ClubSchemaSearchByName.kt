@@ -28,7 +28,7 @@ data class ClubSchemaSearchByName(
 fun ClubSchemaSearchByName.toDisplayData(): ClubDisplayListData {
     return ClubDisplayListData(
         clubId = this.clubId,
+        clubName = this.clubName,
         clubInfo = this.clubInfo,
-        clubName = this.clubName
     )
 }

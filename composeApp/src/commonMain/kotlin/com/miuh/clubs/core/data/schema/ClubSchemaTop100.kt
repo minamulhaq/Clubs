@@ -30,7 +30,8 @@ data class ClubSchemaTop100(
 fun ClubSchemaTop100.toDisplayData(): ClubDisplayListData {
     return ClubDisplayListData(
         clubId = this.clubId,
+        clubName = this.clubName,
         clubInfo = this.clubInfo,
-        clubName = this.clubName
+        skillRating = this.skillRating
     )
 }

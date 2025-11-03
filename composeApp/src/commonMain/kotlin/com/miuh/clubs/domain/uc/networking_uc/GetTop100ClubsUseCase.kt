@@ -8,11 +8,10 @@ import com.miuh.clubs.domain.ClubsRepository
 class GetTop100ClubsUseCase(
     private val repository: ClubsRepository
 ) : NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaTop100>> {
+
     override suspend fun invoke(
-        genType: GenType,
-        leaderboardType: LeaderboardType,
-        clubName: String?
+        p: GenType?, q: LeaderboardType?, r: String?
     ): List<ClubSchemaTop100> {
-        return repository.getTop100(genType, leaderboardType, clubName)
+        return repository.getTop100(p!!, q!!, r)
     }
 }

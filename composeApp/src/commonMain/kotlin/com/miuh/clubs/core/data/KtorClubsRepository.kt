@@ -16,6 +16,8 @@ import kotlin.reflect.typeOf
 class KtorClubsRepository(
     val httpClient: HttpClient
 ) : ClubsRepository {
+
+
     override suspend fun getTop100(
         genType: GenType, leaderboardType: LeaderboardType, clubName: String?
     ): List<ClubSchemaTop100> {
@@ -95,6 +97,20 @@ class KtorClubsRepository(
 //            )
             httpClient.get(url)
         }
+    }
+
+    override suspend fun getClubCrestById(crestID: String): String {
+        val fullUrl = ClubsApi.buildClubCrestAssetUrl(crestID)
+        return fullUrl/*
+        val r = NetworkResponseParser().safeCall<ByteArray> {
+            httpClient.get(fullUrl).body()
+        }
+
+        return when (r) {
+            is Result.Error<*> -> null
+            is Result.Success<*> -> r.data as ByteArray
+        }
+         */
     }
 }
 

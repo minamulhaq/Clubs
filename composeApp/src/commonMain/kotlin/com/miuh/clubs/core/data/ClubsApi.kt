@@ -20,8 +20,7 @@ enum class GenType {
 
 enum class LeaderboardType(val urlSegment: String, val displayString: String) {
     ALL_TIME("allTimeLeaderboard", "All Time"), CURRENT_SEASON(
-        "currentSeasonLeaderboard",
-        "Current Season"
+        "currentSeasonLeaderboard", "Current Season"
     )
 }
 
@@ -30,6 +29,11 @@ object ClubsApi {
     const val BASE_PATH = "/api/fc/"            // keep prefix not as segment
     const val PLATFORM_QUERY = "platform"
     const val CLUB_NAME_QUERY = "clubName"
+
+
+    const val CREST_BASE_URL =
+        "https://eafc24.content.easports.com/fifa/fltOnlineAssets/24B23FDE-7835-41C2-87A2-F453DFDB2E82/2024/fcweb/crests/256x256/l"
+    const val CREST_SUFFIX = ".png"
 
 
     fun buildUrl(
@@ -139,6 +143,11 @@ object ClubsApi {
         }.buildString()
     }
 
+
+    fun buildClubCrestAssetUrl(crestID: String): String {
+        val fullUrl = "$CREST_BASE_URL$crestID$CREST_SUFFIX"
+        return fullUrl
+    }
 
 }
 

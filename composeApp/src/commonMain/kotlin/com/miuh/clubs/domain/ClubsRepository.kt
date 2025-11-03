@@ -19,4 +19,9 @@ interface ClubsRepository {
         name: String?
     ): List<ClubSchemaSearchByName>
 
+
+    suspend fun getClubCrestById(
+        crestID: String
+    ): String
+
 }

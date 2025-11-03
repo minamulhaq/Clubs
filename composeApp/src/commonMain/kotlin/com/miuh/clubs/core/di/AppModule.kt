@@ -7,6 +7,7 @@ import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.ClubsRepository
+import com.miuh.clubs.domain.uc.networking_uc.GetClubCrestAssetByIdUseCase
 import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
 import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
 import com.miuh.clubs.domain.uc.networking_uc.SearchClubByNameUseCase
@@ -65,17 +66,26 @@ class AppModule {
     @SearchClubByName
     fun searchClubByName(repository: ClubsRepository) = SearchClubByNameUseCase(repository)
 
+    @Single(binds = [NetworkingUseCase::class])
+    @GetClubCrestImage
+    fun getClubCrestImageById(repository: ClubsRepository) =
+        GetClubCrestAssetByIdUseCase(repository)
+
+
     @KoinViewModel
     fun clubsViewModel(
         @Top100ClubsUc top100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
         @SearchClubByName searchClubByNameUseCase: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
-    ) =
-        ClubsViewModel(top100ClubsUseCase, searchClubByNameUseCase)
+        @GetClubCrestImage getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>
+    ) = ClubsViewModel(top100ClubsUseCase, searchClubByNameUseCase, getClubCrestAssetByIdUseCase)
 }
 
 
 @Named
 annotation class Top100ClubsUc
+
+@Named
+annotation class GetClubCrestImage
 
 @Named
 annotation class SearchClubByName

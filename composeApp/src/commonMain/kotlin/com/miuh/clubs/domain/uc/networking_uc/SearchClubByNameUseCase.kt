@@ -9,11 +9,10 @@ import com.miuh.clubs.domain.ClubsRepository
 class SearchClubByNameUseCase(
     private val repository: ClubsRepository
 ) : NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaSearchByName>> {
+
     override suspend fun invoke(
-        genType: GenType,
-        leaderboardType: LeaderboardType,
-        clubName: String?
+        p: GenType?, q: LeaderboardType?, r: String?
     ): List<ClubSchemaSearchByName> {
-        return repository.searchClubByName(genType, leaderboardType, clubName)
+        return repository.searchClubByName(p!!, q!!, r)
     }
 }

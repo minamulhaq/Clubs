@@ -71,7 +71,7 @@ fun SearchFilterRow(
                     println("KEY PRESSED ${it.key}")
                     true
                 },
-            value = searchText.value,
+            value = searchText.value.trim(),
             onValueChange = {
                 searchText.value = it
             },

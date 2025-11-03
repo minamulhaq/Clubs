@@ -61,6 +61,11 @@ kotlin {
 
 
             implementation(compose.materialIconsExtended)
+
+
+            // Coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -71,8 +71,7 @@ fun HomeScreen(
                         currentGenType = button.genType
                         viewModel.onEvent(
                             HomeScreenEvent.GetTop100ClubsListEvent(
-                                currentGenType,
-                                currentLeaderboardType
+                                currentGenType, currentLeaderboardType
                             )
                         )
                     }, modifier = Modifier.weight(1f), colors = buttonColors
@@ -89,36 +88,12 @@ fun HomeScreen(
             currentLeaderboardType = it
             viewModel.onEvent(
                 HomeScreenEvent.GetTop100ClubsListEvent(
-                    currentGenType,
-                    currentLeaderboardType
+                    currentGenType, currentLeaderboardType
                 )
             )
-        }
-        )
+        })
 
-        ClubsDisplayListBlock()
-
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().weight(1f) // Use weight to fill remaining space
-        ) {
-            items(items = clubs.value, key = { it.clubId }) { club ->
-                Row {
-                    Text(
-                        text = club.clubName,
-                        modifier = Modifier.fillMaxWidth()
-                            .weight(1f)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                    Text(
-                        text = club.clubId,
-                        modifier = Modifier.fillMaxWidth()
-                            .weight(1f)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-
-                }
-            }
-        }
+        ClubsDisplayListBlock(clubs = clubs.value)
 
     }
 }
