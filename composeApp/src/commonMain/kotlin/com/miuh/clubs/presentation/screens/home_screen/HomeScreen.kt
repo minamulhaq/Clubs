@@ -96,6 +96,8 @@ fun HomeScreen(
         }
         )
 
+        ClubsDisplayListBlock()
+
         LazyColumn(
             modifier = Modifier.fillMaxWidth().weight(1f) // Use weight to fill remaining space
         ) {
