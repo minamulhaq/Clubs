@@ -34,6 +34,7 @@ kotlin {
         val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
+            implementation(libs.koin.android)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.material.icons.extended)
