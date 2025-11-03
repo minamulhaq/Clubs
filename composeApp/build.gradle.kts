@@ -36,7 +36,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
-            implementation("androidx.compose.material:material-icons-extended") // Use extended for full set
+            implementation(libs.androidx.material.icons.extended)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -65,6 +65,8 @@ kotlin {
 
             // Coil
             implementation(libs.coil.compose)
+            implementation(libs.coil.compose.core)
+            implementation(libs.coil.kmp)
             implementation(libs.coil.network.ktor3)
         }
         commonTest.dependencies {

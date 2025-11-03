@@ -87,9 +87,9 @@ fun ClubsDisplayListBlock(
     StaticLeaderboardTableHeader(modifier = modifier)
     LazyColumn {
         clubs
-        items(clubs) {
-            SingleClubDisplayRow(club = it, onClubClicked = {
-                println("Clicked club: ${it.clubName}")
+        items(clubs) { club ->
+            SingleClubDisplayRow(club = club, onClubClicked = {
+                println("Clicked club: ${club.clubName}")
 
             })
             Spacer(modifier = modifier.height(10.dp))
