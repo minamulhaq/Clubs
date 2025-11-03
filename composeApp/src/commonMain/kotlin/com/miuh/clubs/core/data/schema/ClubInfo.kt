@@ -1,4 +1,4 @@
-package com.miuh.clubs.core.data.clubs_json_data
+package com.miuh.clubs.core.data.schema
 
 import kotlinx.serialization.Serializable
 

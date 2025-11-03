@@ -70,25 +70,11 @@ fun HomeScreen(
         LazyColumn(
             modifier = Modifier.fillMaxWidth().weight(1f) // Use weight to fill remaining space
         ) {
-            // Renders an item for each Club object in the 'clubs.value' list
             items(items = clubs.value, key = { it.clubId }) { club ->
-                // Print the clubName string for each item
                 Text(
                     text = club.clubName,
-                    // Optionally add padding or other modifiers
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
                 )
-            }
-
-            // Optional: Show a loading/empty state if the list is empty
-            if (clubs.value.isEmpty()) {
-                item {
-                    // Check for an actual loading state or show a message
-                    Text(
-                        text = "No clubs found or loading...",
-                        modifier = Modifier.fillMaxWidth().padding(16.dp)
-                    )
-                }
             }
         }
 

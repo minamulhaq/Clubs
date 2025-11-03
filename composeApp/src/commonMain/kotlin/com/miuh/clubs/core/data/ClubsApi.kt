@@ -35,7 +35,19 @@ object ClubsApi {
     /**
      * unified builder for leaderboard + search
      */
-    fun buildUrl(
+    fun buildUrlTop100(
+        gameType: GameType, leaderboardType: LeaderboardType
+    ): String {
+        return URLBuilder().apply {
+            // base domain
+            takeFrom(BASE_URL)
+            encodedPath = BASE_PATH + leaderboardType.segment
+            parameters.append(PLATFORM_QUERY, gameType.platformParam())
+
+        }.buildString()
+    }
+
+    fun buildUrlClubSearch(
         gameType: GameType, leaderboardType: LeaderboardType, searchClubName: String? = null
     ): String {
         return URLBuilder().apply {

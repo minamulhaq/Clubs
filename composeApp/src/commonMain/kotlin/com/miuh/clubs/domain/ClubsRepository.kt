@@ -1,11 +1,11 @@
 package com.miuh.clubs.domain
 
-import com.miuh.clubs.core.data.clubs_json_data.Club
+import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.core.util.Error
 import com.miuh.clubs.core.util.Result
 
 
 interface ClubsRepository {
-    suspend fun searchClubs(): List<Club>
+    suspend fun searchClubs(): List<ClubSchemaTop100>
 
 }
