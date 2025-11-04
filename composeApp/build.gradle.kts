@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
+
 }
 
 kotlin {
@@ -27,6 +29,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            linkerOpts.add("-lsqlite3")
         }
     }
 
@@ -41,6 +44,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.androidx.room.sqlite.wrapper)
 
         }
         commonMain.dependencies {
@@ -73,6 +77,10 @@ kotlin {
             implementation(libs.coil.compose.core)
             implementation(libs.coil.kmp)
             implementation(libs.coil.network.ktor3)
+
+            // Room
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -95,7 +103,9 @@ kotlin {
     }
 }
 
-
+room {
+    schemaDirectory("$projectDir/schemas")
+}
 
 ksp {
     arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
@@ -108,11 +118,11 @@ dependencies {
 }
 
 // Ensure KSP metadata generation runs before all other Kotlin compilation tasks
-project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
+//project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+//    if (name != "kspCommonMainKotlinMetadata") {
+//        dependsOn("kspCommonMainKotlinMetadata")
+//    }
+//}
 
 android {
     namespace = "com.miuh.clubs"
@@ -143,7 +153,13 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+//    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 }
+
 
 compose.desktop {
     application {

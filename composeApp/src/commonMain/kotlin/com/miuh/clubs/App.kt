@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -25,19 +24,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
-import coil3.disk.DiskCache
-import coil3.memory.MemoryCache
-import coil3.request.CachePolicy
-import coil3.util.DebugLogger
 import com.miuh.clubs.navigation.HomeRoute
 import com.miuh.clubs.navigation.SettingsRoute
-import com.miuh.clubs.presentation.screens.home_screen.HomeScreen
 import com.miuh.clubs.presentation.SettingsScreen
+import com.miuh.clubs.presentation.screens.home_screen.HomeScreen
 import com.miuh.clubs.ui.ClubsTopBar
 import com.miuh.clubs.ui.navigationdrawer.navigationItems
 import kotlinx.coroutines.launch
-import okio.FileSystem
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
 

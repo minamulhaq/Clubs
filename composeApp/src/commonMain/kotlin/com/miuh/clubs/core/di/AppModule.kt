@@ -1,5 +1,7 @@
 package com.miuh.clubs.core.di
 
+import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.disk.DiskCache
@@ -9,6 +11,7 @@ import coil3.util.DebugLogger
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.KtorClubsRepository
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.db.local.ClubsDatabase
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.ClubsRepository
@@ -26,6 +29,8 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.serialization.json.Json
 import okio.FileSystem
 import org.koin.core.module.Module
@@ -94,14 +99,21 @@ val appModule = module {
 
     viewModel {
         ClubsViewModel(
-            get(Top100ClubsUc),
-            get(SearchClubByName),
-            get(GetClubCrestImage),
-            get()
+            top100uc = get(Top100ClubsUc),
+            searchClubUc = get(SearchClubByName),
+            getClubCrestAssetByIdUseCase = get(GetClubCrestImage),
+            imageLoader = get(),
+            clubsDb = get()
         )
     }
 
+    single<ClubsDatabase> {
+        val builder: RoomDatabase.Builder<ClubsDatabase> = get()
+        builder
+            .setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
 
-
+    }
 
 }

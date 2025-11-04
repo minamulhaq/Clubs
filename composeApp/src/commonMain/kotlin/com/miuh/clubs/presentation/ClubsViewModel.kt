@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import coil3.ImageLoader
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.db.local.ClubsDatabase
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
@@ -23,7 +24,8 @@ class ClubsViewModel(
     private val top100uc: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
     private val searchClubUc: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
     private val getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val clubsDb: ClubsDatabase
 ) : ViewModel() {
 
     private val _currentlySelectedGen = mutableStateOf(GenType.GEN5)

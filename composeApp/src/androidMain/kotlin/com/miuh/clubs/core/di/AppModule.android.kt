@@ -1,12 +1,14 @@
 package com.miuh.clubs.core.di
 
 import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import coil3.ImageLoader
-import coil3.PlatformContext
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import coil3.util.DebugLogger
+import com.miuh.clubs.core.data.db.local.ClubsDatabase
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import okio.FileSystem
@@ -18,6 +20,12 @@ import org.koin.dsl.module
 actual val platformDataModule: Module = module {
     single<HttpClientEngine> {
         OkHttp.create()
+    }
+
+    single<RoomDatabase.Builder<ClubsDatabase>> {
+        val context = androidContext()
+        val dbPath = context.getDatabasePath("clubs_database.db")
+        Room.databaseBuilder(context, ClubsDatabase::class.java, dbPath.path)
     }
 }
 
