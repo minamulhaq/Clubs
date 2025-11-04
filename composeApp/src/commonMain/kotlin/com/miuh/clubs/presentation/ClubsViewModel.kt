@@ -3,6 +3,7 @@ package com.miuh.clubs.presentation
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.ImageLoader
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
@@ -12,6 +13,8 @@ import com.miuh.clubs.core.data.schema.toDisplayData
 import com.miuh.clubs.domain.uc.networking_uc.GetClubCrestAssetByIdUseCase
 import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
 import com.miuh.clubs.presentation.screens.home_screen.HomeScreenEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +22,8 @@ import kotlinx.coroutines.launch
 class ClubsViewModel(
     private val top100uc: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
     private val searchClubUc: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
-    private val getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>
+    private val getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>,
+    private val imageLoader: ImageLoader
 ) : ViewModel() {
 
     private val _currentlySelectedGen = mutableStateOf(GenType.GEN5)
@@ -32,7 +36,7 @@ class ClubsViewModel(
     }
 
     private fun getClubs() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _clubs.value = emptyList()
             _clubs.value = top100uc(
                 p = _currentlySelectedGen.value, q = _currentlySelectedLeaderBoard.value, null
@@ -45,7 +49,7 @@ class ClubsViewModel(
     }
 
     private fun searchClubByName(clubName: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _clubs.value = emptyList()
             _clubs.value = searchClubUc(
                 p = _currentlySelectedGen.value,

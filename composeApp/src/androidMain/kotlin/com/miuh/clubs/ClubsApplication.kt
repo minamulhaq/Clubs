@@ -4,11 +4,17 @@ import android.app.Application
 import com.miuh.clubs.core.di.initKoin
 import org.koin.android.ext.koin.androidContext
 
-class ClubsApplication : Application() {
+class ClubsApplication : Application(){
+
+
     override fun onCreate() {
         super.onCreate()
+
+
         initKoin {
             androidContext(this@ClubsApplication)
         }
     }
+
+
 }
