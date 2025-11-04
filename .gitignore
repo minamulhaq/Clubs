@@ -44,3 +44,5 @@ gradle/wrapper/gradle-wrapper.jar
 # 4. Standard OS/Miscellaneous
 Thumbs.db
 *.log
+
+**/schemas/
