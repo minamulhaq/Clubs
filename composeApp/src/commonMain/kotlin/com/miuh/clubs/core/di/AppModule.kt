@@ -1,7 +1,6 @@
 package com.miuh.clubs.core.di
 
 import com.miuh.clubs.core.data.GenType
-import com.miuh.clubs.core.data.HttpClientEngineFactory
 import com.miuh.clubs.core.data.KtorClubsRepository
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
@@ -28,13 +27,23 @@ import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.parameter.ParametersHolder
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
+import kotlin.math.sin
 
-@Module
-class AppModule {
 
-    @Single
-    fun httpClient(engine: HttpClientEngine): HttpClient {
-        return HttpClient(engine) {
+expect val platformDataModule: org.koin.core.module.Module
+
+val Top100ClubsUc = named("Top100ClubsUc")
+val SearchClubByName = named("SearchClubByName")
+val GetClubCrestImage = named("GetClubCrestImage")
+
+
+val appModule = module {
+    single {
+        HttpClient(get()) {
             install(Logging) {
                 level = LogLevel.ALL
             }
@@ -52,40 +61,37 @@ class AppModule {
         }
     }
 
-    @Factory
-    fun httpClientEngine(): HttpClientEngine = HttpClientEngineFactory().getHttpEngine()
 
-    @Factory(binds = [ClubsRepository::class])
-    fun clubsRepository(httpClient: HttpClient) = KtorClubsRepository(httpClient)
+    factory<ClubsRepository> {
+        KtorClubsRepository(get())
 
-    @Single(binds = [NetworkingUseCase::class])
-    @Top100ClubsUc
-    fun top100Uc(repository: ClubsRepository) = GetTop100ClubsUseCase(repository)
-
-    @Single(binds = [NetworkingUseCase::class])
-    @SearchClubByName
-    fun searchClubByName(repository: ClubsRepository) = SearchClubByNameUseCase(repository)
-
-    @Single(binds = [NetworkingUseCase::class])
-    @GetClubCrestImage
-    fun getClubCrestImageById(repository: ClubsRepository) =
-        GetClubCrestAssetByIdUseCase(repository)
+    }
 
 
-    @KoinViewModel
-    fun clubsViewModel(
-        @Top100ClubsUc top100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
-        @SearchClubByName searchClubByNameUseCase: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
-        @GetClubCrestImage getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>
-    ) = ClubsViewModel(top100ClubsUseCase, searchClubByNameUseCase, getClubCrestAssetByIdUseCase)
+
+    single<NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaTop100>>>(
+        Top100ClubsUc
+    ) {
+        GetTop100ClubsUseCase(get())
+    }
+
+    single<NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>>(
+        SearchClubByName
+    ) {
+        SearchClubByNameUseCase(get())
+    }
+
+    single<NetworkingUseCase<String, Unit?, Unit?, String>>(GetClubCrestImage) {
+        GetClubCrestAssetByIdUseCase(get())
+    }
+
+
+    viewModel {
+        ClubsViewModel(
+            get(Top100ClubsUc),
+            get(SearchClubByName),
+            get(GetClubCrestImage)
+        )
+    }
+
 }
-
-
-@Named
-annotation class Top100ClubsUc
-
-@Named
-annotation class GetClubCrestImage
-
-@Named
-annotation class SearchClubByName
