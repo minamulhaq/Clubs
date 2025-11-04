@@ -34,10 +34,14 @@ kotlin {
         val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
-            implementation(libs.koin.android)
+
             implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.material.icons.extended)
+
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+            implementation(libs.ktor.client.okhttp)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -52,7 +56,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
 
-            implementation(libs.koin.core)
+            api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.compose.viewmodel.navigation)
