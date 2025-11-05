@@ -7,7 +7,7 @@ import kotlin.String
 
 @Entity(tableName = "bookmarked_clubs")
 data class ClubEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = false)
     val clubId: String,
     val clubName: String,
     val skillRating: String = "",
