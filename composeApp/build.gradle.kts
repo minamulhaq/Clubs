@@ -45,6 +45,9 @@ kotlin {
             implementation(libs.koin.androidx.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.room.sqlite.wrapper)
+            // Splash screen
+            implementation(libs.androidx.core.splashscreen)
+
 
         }
         commonMain.dependencies {
@@ -84,6 +87,7 @@ kotlin {
 
             // Kermit
             implementation(libs.kermit)
+
 
         }
 

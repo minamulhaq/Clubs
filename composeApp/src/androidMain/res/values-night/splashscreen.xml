@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--symotion-s) Define your splash screen theme -->
+    <style name="Theme.CluApp.Starting" parent="Theme.SplashScreen">
+        <item name="android:windowBackground">#000000</item>
+        <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/clubs_splash_logo</item>
+        <!-- <item name="windowSplashScreenIconBackground">@drawable/splash_background</item> -->
+    </style>
+
+</resources>
+
