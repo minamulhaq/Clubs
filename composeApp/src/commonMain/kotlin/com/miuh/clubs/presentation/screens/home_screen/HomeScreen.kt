@@ -29,6 +29,7 @@ import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
 import com.miuh.clubs.navigation.Routes
 import com.miuh.clubs.presentation.ClubsViewModel
+import com.miuh.clubs.presentation.screens.components.CcButton
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -64,7 +65,8 @@ fun HomeScreen(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         BookmarkedClubsSection(clubs = bookmarkedClubs, onClubClicked = {
-            viewModel.onEvent(HomeScreenEvent.RemoveClubFromBookmarksClubEvent(it))
+
+//            viewModel.onEvent(HomeScreenEvent.RemoveClubFromBookmarksClubEvent(it))
         })
         Text(text = "Top 100 Ratings")
         Row(
@@ -126,16 +128,21 @@ fun HomeScreen(
             ) {
                 ClubActionModalBottomSheet(
                     club = clubToTakeActionOn!!,
-                    bookmarkClub = {
-                        viewModel.onEvent(HomeScreenEvent.AddClubToBookmarksClubEvent(it))
-                        showBottomSheet = false
-                        clubToTakeActionOn = null
+                    okButton = {
+                        CcButton(
+                            buttonOnClick = {
+                                viewModel.onEvent(HomeScreenEvent.AddClubToBookmarksClubEvent(it))
+                                showBottomSheet = false
+                                clubToTakeActionOn = null
+
+                            },
+                            buttonText = "Bookmark Club"
+                        )
                     }
                 )
             }
 
         }
     }
-
 }
 
