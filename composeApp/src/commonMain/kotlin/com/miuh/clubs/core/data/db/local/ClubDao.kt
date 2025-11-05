@@ -21,4 +21,7 @@ interface ClubDao {
 
     @Delete
     suspend fun delete(club: ClubEntity)
+
+    @Query("DELETE FROM bookmarked_clubs WHERE clubId = :clubId")
+    suspend fun deleteByClubId(clubId: String)
 }

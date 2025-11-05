@@ -81,7 +81,12 @@ kotlin {
             // Room
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
+
+            // Kermit
+            implementation(libs.kermit)
+
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }

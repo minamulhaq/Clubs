@@ -1,14 +1,18 @@
 package com.miuh.clubs.presentation.screens.home_screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.miuh.clubs.core.data.db.local.ClubEntity
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
 import com.miuh.clubs.core.data.schema.ClubInfo
 import com.miuh.clubs.core.data.schema.CustomKit
@@ -21,21 +25,17 @@ fun SingleClubDisplayRow(
     club: ClubDisplayListData,
     onClubClicked: (ClubDisplayListData) -> Unit
 ) {
-    LazyRow(
+    Row(
         modifier = modifier.fillMaxWidth().height(35.dp)
             .clickable(onClick = {
                 onClubClicked(club)
             })
     ) {
-        item {
-            Text(text = club.clubName)
-        }
-        item {
-            AsyncImage(
-                model = club.crestImageUrl,
-                contentDescription = null,
-            )
-        }
+        Text(text = club.clubName)
+        AsyncImage(
+            model = club.crestImageUrl,
+            contentDescription = null,
+        )
     }
 }
 

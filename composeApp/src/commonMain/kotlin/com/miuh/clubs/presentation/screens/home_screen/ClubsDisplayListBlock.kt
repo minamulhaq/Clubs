@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.miuh.clubs.core.data.db.local.ClubEntity
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -82,16 +83,13 @@ fun StaticLeaderboardTableHeader(
 @Preview
 @Composable
 fun ClubsDisplayListBlock(
-    modifier: Modifier = Modifier, clubs: List<ClubDisplayListData>
+    modifier: Modifier = Modifier, clubs: List<ClubDisplayListData>,
+    onClubClicked: (ClubDisplayListData) -> Unit
 ) {
     StaticLeaderboardTableHeader(modifier = modifier)
     LazyColumn {
-        clubs
         items(clubs) { club ->
-            SingleClubDisplayRow(club = club, onClubClicked = {
-                println("Clicked club: ${club.clubName}")
-
-            })
+            SingleClubDisplayRow(club = club, onClubClicked = onClubClicked)
             Spacer(modifier = modifier.height(10.dp))
         }
     }
