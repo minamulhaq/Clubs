@@ -80,10 +80,9 @@ fun StaticLeaderboardTableHeader(
 
 }
 
-@Preview
 @Composable
 fun ClubsDisplayListBlock(
-    modifier: Modifier = Modifier, clubs: List<ClubDisplayListData>,
+    modifier: Modifier = Modifier, clubs: List<ClubDisplayListData> = emptyList(),
     onClubClicked: (ClubDisplayListData) -> Unit
 ) {
     StaticLeaderboardTableHeader(modifier = modifier)
@@ -94,3 +93,13 @@ fun ClubsDisplayListBlock(
         }
     }
 }
+
+
+@Preview
+@Composable
+fun ClubsDisplayListBlockPreview(
+) {
+    StaticLeaderboardTableHeader()
+
+}
+

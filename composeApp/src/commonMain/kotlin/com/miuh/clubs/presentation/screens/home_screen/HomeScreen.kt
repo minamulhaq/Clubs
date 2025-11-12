@@ -67,6 +67,8 @@ fun HomeScreen(
         BookmarkedClubsSection(clubs = bookmarkedClubs, onClubClicked = {
 
 //            viewModel.onEvent(HomeScreenEvent.RemoveClubFromBookmarksClubEvent(it))
+        }, isBookmarked = {
+            true
         })
         Text(text = "Top 100 Ratings")
         Row(
@@ -119,16 +121,13 @@ fun HomeScreen(
         val scope = rememberCoroutineScope()
         if (showBottomSheet) {
             ModalBottomSheet(
-                sheetState = bottomSheetState,
-                onDismissRequest = {
+                sheetState = bottomSheetState, onDismissRequest = {
                     scope.launch { bottomSheetState.hide() }
                     showBottomSheet = false
                     clubToTakeActionOn = null
-                }
-            ) {
+                }) {
                 ClubActionModalBottomSheet(
-                    club = clubToTakeActionOn!!,
-                    okButton = {
+                    club = clubToTakeActionOn!!, okButton = {
                         CcButton(
                             buttonOnClick = {
                                 viewModel.onEvent(HomeScreenEvent.AddClubToBookmarksClubEvent(it))
@@ -136,10 +135,9 @@ fun HomeScreen(
                                 clubToTakeActionOn = null
 
                             },
-                            buttonText = "Bookmark Club"
+                            bookmarked = true
                         )
-                    }
-                )
+                    })
             }
 
         }
