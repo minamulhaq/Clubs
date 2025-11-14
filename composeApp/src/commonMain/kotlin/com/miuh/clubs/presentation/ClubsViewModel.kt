@@ -14,6 +14,7 @@ import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.core.data.schema.toDisplayData
 import com.miuh.clubs.core.data.schema.toEntity
 import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
+import com.miuh.clubs.domain.uc.networking_uc.DBUseCaseProvider
 import com.miuh.clubs.presentation.screens.home_screen.HomeScreenEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -25,11 +26,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ClubsViewModel(
-    private val top100uc: NetworkingUseCase<GenType, LeaderboardType, Unit?, List<ClubSchemaTop100>>,
-    private val searchClubUc: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
-    private val getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>,
     private val imageLoader: ImageLoader,
-    private val clubsDb: ClubsDatabase
+    private val clubsDb: ClubsDatabase,
+    private val localDBUseCaseProvider: DBUseCaseProvider
 ) : ViewModel() {
     private val logger = Logger.withTag(ClubsViewModel::class.simpleName.toString())
 
@@ -57,11 +56,13 @@ class ClubsViewModel(
     private fun getClubs() {
         viewModelScope.launch(Dispatchers.IO) {
             _clubs.value = emptyList()
-            _clubs.value = top100uc(
-                p = _currentlySelectedGen.value, q = _currentlySelectedLeaderBoard.value, null
+            _clubs.value = localDBUseCaseProvider.getTop100(
+                genType = _currentlySelectedGen.value,
+                leaderboardType = _currentlySelectedLeaderBoard.value,
+                clubName = null
             ).map { club ->
                 club.toDisplayData().copy(
-                    crestImageUrl = getClubCrestAssetByIdUseCase(club.clubInfo.customKit.crestAssetId)
+                    crestImageUrl = localDBUseCaseProvider.getClubCrestByID(club.clubInfo.customKit.crestAssetId)
                 )
             }
         }
@@ -70,13 +71,13 @@ class ClubsViewModel(
     private fun searchClubByName(clubName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _clubs.value = emptyList()
-            _clubs.value = searchClubUc(
-                p = _currentlySelectedGen.value,
-                q = _currentlySelectedLeaderBoard.value,
-                r = clubName.trim()
+            _clubs.value = localDBUseCaseProvider.searchClubByName(
+                genType = _currentlySelectedGen.value,
+                leaderboardType = _currentlySelectedLeaderBoard.value,
+                name = clubName.trim()
             ).map { club ->
                 club.toDisplayData().copy(
-                    crestImageUrl = getClubCrestAssetByIdUseCase(club.clubInfo.customKit.crestAssetId)
+                    crestImageUrl = localDBUseCaseProvider.getClubCrestByID(club.clubInfo.customKit.crestAssetId)
                 )
             }
         }
