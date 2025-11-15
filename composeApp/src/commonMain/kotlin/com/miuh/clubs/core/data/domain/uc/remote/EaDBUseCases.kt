@@ -1,17 +1,17 @@
-package com.miuh.clubs.core.data.db.local
+package com.miuh.clubs.core.data.domain.uc.remote
 
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
-import com.miuh.clubs.domain.uc.networking_uc.DBUseCaseProvider
-import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
+import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
 
-class LocalDBUseCaseProvider(
+class EaDBUseCases(
     private val getTop100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaTop100>>,
     private val searchClubUc: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
     private val getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>,
-) : DBUseCaseProvider {
+) : RemoteUseCases {
     override suspend fun getTop100(
         genType: GenType,
         leaderboardType: LeaderboardType,

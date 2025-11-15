@@ -4,18 +4,16 @@ import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.core.util.Error
 import com.miuh.clubs.core.util.Result
-import com.miuh.clubs.domain.ClubsRepository
+import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.util.reflect.TypeInfo
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import kotlin.reflect.typeOf
 
-class KtorClubsRepository(
+class KtorClubsRemoteRepository(
     val httpClient: HttpClient
-) : ClubsRepository {
+) : ClubsRemoteRepository {
 
 
     override suspend fun getTop100(

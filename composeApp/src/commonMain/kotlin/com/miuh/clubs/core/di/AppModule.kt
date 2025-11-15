@@ -4,18 +4,19 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import coil3.ImageLoader
 import com.miuh.clubs.core.data.GenType
-import com.miuh.clubs.core.data.KtorClubsRepository
+import com.miuh.clubs.core.data.KtorClubsRemoteRepository
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.db.local.ClubDao
 import com.miuh.clubs.core.data.db.local.ClubsDatabase
-import com.miuh.clubs.core.data.db.local.LocalDBUseCaseProvider
+import com.miuh.clubs.core.data.domain.uc.remote.EaDBUseCases
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
-import com.miuh.clubs.domain.ClubsRepository
-import com.miuh.clubs.domain.uc.networking_uc.GetClubCrestAssetByIdUseCase
-import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
-import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
-import com.miuh.clubs.domain.uc.networking_uc.DBUseCaseProvider
-import com.miuh.clubs.domain.uc.networking_uc.SearchClubByNameUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
+import com.miuh.clubs.domain.uc.remote_db_uc.GetClubCrestAssetByIdUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.GetTop100ClubsUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
+import com.miuh.clubs.domain.uc.remote_db_uc.SearchClubByNameUseCase
 import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
@@ -66,8 +67,8 @@ val appModule = module {
     }
 
 
-    factory<ClubsRepository> {
-        KtorClubsRepository(get())
+    factory<ClubsRemoteRepository> {
+        KtorClubsRemoteRepository(get())
 
     }
 
@@ -95,14 +96,13 @@ val appModule = module {
 
     viewModel {
         ClubsViewModel(
-            imageLoader = get(),
-            clubsDb = get(),
-            localDBUseCaseProvider = get()
+            localUseCases = get(),
+            remoteUseCases = get()
         )
     }
 
-    single<DBUseCaseProvider> {
-        LocalDBUseCaseProvider(
+    single<RemoteUseCases> {
+        EaDBUseCases(
             searchClubUc = get(SearchClubByName),
             getTop100ClubsUseCase = get(Top100ClubsUc),
             getClubCrestAssetByIdUseCase = get(GetClubCrestImage),
@@ -118,4 +118,8 @@ val appModule = module {
 
     }
 
+    single<ClubDao> {
+        val dataBase: ClubsDatabase = get()
+        dataBase.clubsDao()
+    }
 }

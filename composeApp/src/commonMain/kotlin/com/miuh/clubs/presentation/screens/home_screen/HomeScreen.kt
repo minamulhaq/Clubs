@@ -59,7 +59,7 @@ fun HomeScreen(
         mutableStateOf(LeaderboardType.ALL_TIME)
     }
 
-    val bookmarkedClubs by viewModel.bookmarkedClubs.collectAsStateWithLifecycle()
+    val bookmarkedClubs by viewModel.bookmarkedClubs.collectAsStateWithLifecycle(emptyList())
 
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
