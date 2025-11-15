@@ -99,7 +99,8 @@ class KtorClubsRemoteRepository(
 
     override suspend fun getClubCrestById(crestID: String): String {
         val fullUrl = ClubsApi.buildClubCrestAssetUrl(crestID)
-        return fullUrl/*
+        return fullUrl
+        /*
         val r = NetworkResponseParser().safeCall<ByteArray> {
             httpClient.get(fullUrl).body()
         }
@@ -111,22 +112,3 @@ class KtorClubsRemoteRepository(
          */
     }
 }
-
-
-/*
-Search the top100 clubs -
-
-filter = gentype
-filter2 = allTimeLeaderboard / currentSeasonLeaderboard
-
-https://proclubs.ea.com/api/fc/allTimeLeaderboard?platform=common-gen5
-https://proclubs.ea.com/api/fc/currentSeasonLeaderboard?platform=common-gen5
-
-https://proclubs.ea.com/api/fc/allTimeLeaderboard?platform=common-gen4
-https://proclubs.ea.com/api/fc/allTimeLeaderboard?platform=nx
-
-
-search club:
-https://proclubs.ea.com/api/fc/currentSeasonLeaderboard/search?platform=common-gen5&clubName=gulagis
-
- */
