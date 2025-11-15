@@ -9,14 +9,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,13 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.touchlab.kermit.Logger
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
-import com.miuh.clubs.core.data.schema.ClubDisplayListData
 import com.miuh.clubs.navigation.Routes
 import com.miuh.clubs.presentation.ClubsViewModel
-import com.miuh.clubs.presentation.screens.components.CcButton
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -41,9 +35,7 @@ fun HomeScreen(
     viewModel: ClubsViewModel = koinViewModel(),
     navigateTo: (route: Routes) -> Unit
 ) {
-    val bottomSheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
-    var clubToTakeActionOn by remember { mutableStateOf<ClubDisplayListData?>(null) }
+    val logger = Logger.withTag("HomeScreen")
 
     val clubs = viewModel.clubs.collectAsStateWithLifecycle()
 
@@ -64,12 +56,16 @@ fun HomeScreen(
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BookmarkedClubsSection(clubs = bookmarkedClubs, onClubClicked = {
-
-//            viewModel.onEvent(HomeScreenEvent.RemoveClubFromBookmarksClubEvent(it))
-        }, isBookmarked = {
-            true
-        })
+        ClubsListView(
+            clubs = bookmarkedClubs,
+            isBookmarked = { club ->
+                bookmarkedClubs.any { c ->
+                    c.clubId == club.clubId
+                }
+            },
+            onButtonClick = { event ->
+                viewModel.onEvent(event)
+            })
         Text(text = "Top 100 Ratings")
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -111,36 +107,16 @@ fun HomeScreen(
                 )
             )
         })
-
-        ClubsDisplayListBlock(clubs = clubs.value, onClubClicked = {
-            clubToTakeActionOn = it
-            showBottomSheet = true
-        })
-
-
-        val scope = rememberCoroutineScope()
-        if (showBottomSheet) {
-            ModalBottomSheet(
-                sheetState = bottomSheetState, onDismissRequest = {
-                    scope.launch { bottomSheetState.hide() }
-                    showBottomSheet = false
-                    clubToTakeActionOn = null
-                }) {
-                ClubActionModalBottomSheet(
-                    club = clubToTakeActionOn!!, okButton = {
-                        CcButton(
-                            buttonOnClick = {
-                                viewModel.onEvent(HomeScreenEvent.AddClubToBookmarksClubEvent(it))
-                                showBottomSheet = false
-                                clubToTakeActionOn = null
-
-                            },
-                            bookmarked = true
-                        )
-                    })
-            }
-
-        }
+        ClubsListView(
+            clubs = clubs.value,
+            onButtonClick = { event ->
+                viewModel.onEvent(event)
+            },
+            isBookmarked = { club ->
+                bookmarkedClubs.any {
+                    it.clubId == club.clubId
+                }
+            })
     }
 }
 
