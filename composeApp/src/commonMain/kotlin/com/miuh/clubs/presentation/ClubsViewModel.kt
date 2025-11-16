@@ -14,6 +14,7 @@ import com.miuh.clubs.core.util.Result
 import com.miuh.clubs.domain.uc.local_db_uc.LocalDbUseCases
 import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
 import com.miuh.clubs.presentation.screens.home_screen.HomeScreenEvent
+import com.miuh.clubs.presentation.screens.home_screen.HomeScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,9 @@ class ClubsViewModel(
     private val remoteUseCases: RemoteUseCases
 ) : ViewModel() {
     private val logger = Logger.withTag(this::class.simpleName.toString())
+
+    private val _homeScreenState = MutableStateFlow<HomeScreenState>(HomeScreenState())
+    val homeScreenState = _homeScreenState.asStateFlow()
 
 
     private val _currentlySelectedGen = mutableStateOf(GenType.GEN5)
@@ -106,26 +110,46 @@ class ClubsViewModel(
             }
 
             is HomeScreenEvent.ToClubDetailsScreenClubEvent -> {
-                viewModelScope.launch {
-                    val stats = remoteUseCases.getClubOverallStats(
-                        genType = GenType.GEN5,
-                        id = event.club.clubId.toInt()
-                    )
-                    when (stats){
-                        is Result.Error<*> -> {
-                            logger.e { stats.error.toString()}
-                        }
-                        is Result.Success<*> -> {
-                            logger.d {
-                                "Stats: ${stats.data}"
+                // CORRECTION: Assign the new state object with isLoading = true back to the StateFlow.
+                _homeScreenState.value = _homeScreenState.value.copy(
+                    isLoading = true
+                )
+
+                viewModelScope.launch(Dispatchers.IO) { // Added Dispatchers.IO for the remote call
+                    try {
+                        val stats = remoteUseCases.getClubOverallStats(
+                            genType = GenType.GEN5,
+                            id = event.club.clubId.toInt()
+                        )
+                        when (stats) {
+                            is Result.Error<*> -> {
+                                logger.e { stats.error.toString() }
+                                // Handle error state display if necessary
+                            }
+
+                            is Result.Success<*> -> {
+                                logger.d {
+                                    "Stats: ${stats.data}"
+                                }
+                                // Navigate on success, passing stats.data
+                                // navigateTo(Routes.ClubDetails(stats.data as SchemaOverallStat))
                             }
                         }
+                    } catch (e: Exception) {
+                        // Embedded Advice: Catch and log unexpected coroutine exceptions
+                        logger.e(e) { "Error fetching club stats" }
+                    } finally {
+                        // CORRECTION: Reset isLoading inside the launch block's finally
+                        // to guarantee it runs after the async call completes or fails.
+                        _homeScreenState.value = _homeScreenState.value.copy(
+                            isLoading = false
+                        )
                     }
-
                 }
-
             }
+
         }
+
 
     }
 

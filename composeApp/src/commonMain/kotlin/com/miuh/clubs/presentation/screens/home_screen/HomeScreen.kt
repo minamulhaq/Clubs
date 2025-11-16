@@ -2,6 +2,7 @@ package com.miuh.clubs.presentation.screens.home_screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.navigation.Routes
 import com.miuh.clubs.presentation.ClubsViewModel
+import com.miuh.clubs.ui.common.LoadingAnimation
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -38,6 +40,7 @@ fun HomeScreen(
     val logger = Logger.withTag("HomeScreen")
 
     val clubs = viewModel.clubs.collectAsStateWithLifecycle()
+    val homeScreenState by viewModel.homeScreenState.collectAsStateWithLifecycle()
 
     var selectedButtonIndex by rememberSaveable {
         mutableStateOf(0)
@@ -53,70 +56,76 @@ fun HomeScreen(
 
     val bookmarkedClubs by viewModel.bookmarkedClubs.collectAsStateWithLifecycle(emptyList())
 
-    Column(
-        modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        ClubsListView(
-            clubs = bookmarkedClubs,
-            isBookmarked = { club ->
-                bookmarkedClubs.any { c ->
-                    c.clubId == club.clubId
-                }
-            },
-            onButtonClick = { event ->
-                viewModel.onEvent(event)
-            })
-        Text(text = "Top 100 Ratings")
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+    if (homeScreenState.isLoading) {
+        LoadingAnimation()
+    } else {
+        Column(
+            modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            ClubsListView(
+                clubs = bookmarkedClubs,
+                isBookmarked = { club ->
+                    bookmarkedClubs.any { c ->
+                        c.clubId == club.clubId
+                    }
+                },
+                onButtonClick = { event ->
+                    viewModel.onEvent(event)
+                })
+            Text(text = "Top 100 Ratings")
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
 
-            genFilterButtons.forEachIndexed { index, button ->
-                val isSelected = index == selectedButtonIndex
+                genFilterButtons.forEachIndexed { index, button ->
+                    val isSelected = index == selectedButtonIndex
 
-                val buttonColors = ButtonDefaults.buttonColors(
-                    containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Button(
-                    onClick = {
-                        selectedButtonIndex = index
-                        currentGenType = button.genType
-                        viewModel.onEvent(
-                            HomeScreenEvent.GetTop100ClubsListEvent(
-                                currentGenType, currentLeaderboardType
-                            )
-                        )
-                    }, modifier = Modifier.weight(1f), colors = buttonColors
-                ) {
-                    Text(
-                        text = button.title, fontSize = 10.sp
+                    val buttonColors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
+
+                    Button(
+                        onClick = {
+                            selectedButtonIndex = index
+                            currentGenType = button.genType
+                            viewModel.onEvent(
+                                HomeScreenEvent.GetTop100ClubsListEvent(
+                                    currentGenType, currentLeaderboardType
+                                )
+                            )
+                        }, modifier = Modifier.weight(1f), colors = buttonColors
+                    ) {
+                        Text(
+                            text = button.title, fontSize = 10.sp
+                        )
+                    }
                 }
             }
-        }
-        SearchFilterRow(clubSearchByName = {
-            viewModel.onEvent(HomeScreenEvent.SearchClubByNameEvent(it))
-        }, onLeaderBoardChanged = {
-            currentLeaderboardType = it
-            viewModel.onEvent(
-                HomeScreenEvent.GetTop100ClubsListEvent(
-                    currentGenType, currentLeaderboardType
+            SearchFilterRow(clubSearchByName = {
+                viewModel.onEvent(HomeScreenEvent.SearchClubByNameEvent(it))
+            }, onLeaderBoardChanged = {
+                currentLeaderboardType = it
+                viewModel.onEvent(
+                    HomeScreenEvent.GetTop100ClubsListEvent(
+                        currentGenType, currentLeaderboardType
+                    )
                 )
-            )
-        })
-        ClubsListView(
-            clubs = clubs.value,
-            onButtonClick = { event ->
-                viewModel.onEvent(event)
-            },
-            isBookmarked = { club ->
-                bookmarkedClubs.any {
-                    it.clubId == club.clubId
-                }
             })
+            ClubsListView(
+                clubs = clubs.value,
+                onButtonClick = { event ->
+                    viewModel.onEvent(event)
+                },
+                isBookmarked = { club ->
+                    bookmarkedClubs.any {
+                        it.clubId == club.clubId
+                    }
+                })
+        }
+
     }
+
 }
 
