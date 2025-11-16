@@ -1,4 +1,7 @@
-package com.miuh.clubs.domain.uc.remote_db_uc
+package com.miuh.clubs.core.data.domain.uc.remote
+
+import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
+import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
 
 
 class GetClubCrestAssetByIdUseCase(

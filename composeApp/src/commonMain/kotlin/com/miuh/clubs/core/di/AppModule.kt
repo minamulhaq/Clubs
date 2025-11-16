@@ -12,11 +12,11 @@ import com.miuh.clubs.core.data.domain.uc.remote.EaDBUseCases
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
-import com.miuh.clubs.domain.uc.remote_db_uc.GetClubCrestAssetByIdUseCase
-import com.miuh.clubs.domain.uc.remote_db_uc.GetTop100ClubsUseCase
+import com.miuh.clubs.core.data.domain.uc.remote.GetClubCrestAssetByIdUseCase
+import com.miuh.clubs.core.data.domain.uc.remote.GetTop100ClubsUseCase
 import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
 import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
-import com.miuh.clubs.domain.uc.remote_db_uc.SearchClubByNameUseCase
+import com.miuh.clubs.core.data.domain.uc.remote.SearchClubByNameUseCase
 import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth

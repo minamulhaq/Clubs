@@ -1,11 +1,9 @@
 package com.miuh.clubs.domain.uc
 
-import com.miuh.clubs.core.data.domain.repositories.local.LocalDBRepository
 import com.miuh.clubs.core.data.domain.uc.local.ClubsLocalDBUseCases
-import com.miuh.clubs.domain.repository.local.LocalRepository
-import com.miuh.clubs.domain.uc.local_db_uc.DeleteByIDUseCaseSuspend
-import com.miuh.clubs.domain.uc.local_db_uc.GetAllFromDatabaseUseCase
-import com.miuh.clubs.domain.uc.local_db_uc.InsertClubsInDBUseCaseSuspend
+import com.miuh.clubs.core.data.domain.uc.local.DeleteByIDUseCaseSuspend
+import com.miuh.clubs.core.data.domain.uc.local.GetAllFromDatabaseUseCase
+import com.miuh.clubs.core.data.domain.uc.local.InsertClubsInDBUseCaseSuspend
 import com.miuh.clubs.domain.uc.local_db_uc.LocalDbUseCases
 import org.koin.dsl.module
 
