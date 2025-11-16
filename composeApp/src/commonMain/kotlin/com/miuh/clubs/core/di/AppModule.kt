@@ -13,6 +13,7 @@ import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
 import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
 import com.miuh.clubs.core.data.domain.uc.remote.GetClubCrestAssetByIdUseCase
+import com.miuh.clubs.core.data.domain.uc.remote.GetClubOverallStatsUseCase
 import com.miuh.clubs.core.data.domain.uc.remote.GetTop100ClubsUseCase
 import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
 import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
@@ -44,6 +45,7 @@ expect fun Scope.createImageLoader(): ImageLoader
 val Top100ClubsUc = named("Top100ClubsUc")
 val SearchClubByName = named("SearchClubByName")
 val GetClubCrestImage = named("GetClubCrestImage")
+val GetClubOverallStats = named("GetClubOverallStats")
 
 
 val appModule = module {
@@ -90,6 +92,10 @@ val appModule = module {
         GetClubCrestAssetByIdUseCase(get())
     }
 
+    single<GetClubOverallStatsUseCase>(GetClubOverallStats) {
+        GetClubOverallStatsUseCase(repository = get())
+    }
+
     single<ImageLoader> {
         createImageLoader()
     }
@@ -106,6 +112,7 @@ val appModule = module {
             searchClubUc = get(SearchClubByName),
             getTop100ClubsUseCase = get(Top100ClubsUc),
             getClubCrestAssetByIdUseCase = get(GetClubCrestImage),
+            getClubOverallStatsUseCase = get(GetClubOverallStats)
         )
     }
 

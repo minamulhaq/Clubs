@@ -4,6 +4,9 @@ import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
+import com.miuh.clubs.core.data.schema.SchemaOverallStat
+import com.miuh.clubs.core.util.Error
+import com.miuh.clubs.core.util.Result
 
 interface RemoteUseCases {
 
@@ -21,5 +24,10 @@ interface RemoteUseCases {
 
 
     suspend fun getClubCrestByID(id: String?): String
+
+    suspend fun getClubOverallStats(
+        genType: GenType,
+        id: Int
+    ): Result<SchemaOverallStat, Error>
 
 }

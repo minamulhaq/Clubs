@@ -1,10 +1,16 @@
 package com.miuh.clubs.core.data
 
+import co.touchlab.kermit.Logger
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
+import com.miuh.clubs.core.data.schema.SchemaOverallStat
+import com.miuh.clubs.core.util.EaErrors
+import com.miuh.clubs.core.util.JsonParsingError
 import com.miuh.clubs.core.util.Error
+import com.miuh.clubs.core.util.NetworkError
 import com.miuh.clubs.core.util.Result
 import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
+import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -15,6 +21,7 @@ class KtorClubsRemoteRepository(
     val httpClient: HttpClient
 ) : ClubsRemoteRepository {
 
+    private val logger = Logger.withTag(this::class.simpleName.toString())
 
     override suspend fun getTop100(
         genType: GenType, leaderboardType: LeaderboardType, clubName: String?
@@ -110,5 +117,32 @@ class KtorClubsRemoteRepository(
             is Result.Success<*> -> r.data as ByteArray
         }
          */
+    }
+
+    override suspend fun getClubOverallStatsUseCase(
+        genType: GenType,
+        clubId: Int
+    ): Result<SchemaOverallStat, Error> {
+        val fullUrl: String =
+            ClubsApi.buildClubOverallStatsUrl(genType = genType, clubIds = listOf(clubId))
+        logger.d {
+            "Url is: $fullUrl"
+        }
+        val r = NetworkResponseParser().safeCall<List<SchemaOverallStat>> {
+            httpClient.get(fullUrl).body()
+        }
+        return when (r) {
+            is Result.Error<*> -> {
+                Result.Error(error = EaErrors.FAILED_TO_PARSE)
+            }
+
+            is Result.Success<*> -> {
+                val statsList: List<SchemaOverallStat> = r.data as List<SchemaOverallStat>
+                if (statsList.isEmpty()) {
+                    return Result.Error(error = EaErrors.EMPTY_RECORD)
+                }
+                return Result.Success(statsList.first())
+            }
+        }
     }
 }

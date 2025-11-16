@@ -4,6 +4,9 @@ import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
+import com.miuh.clubs.core.data.schema.SchemaOverallStat
+import com.miuh.clubs.core.util.Error
+import com.miuh.clubs.core.util.Result
 import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
 import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
 
@@ -11,6 +14,7 @@ class EaDBUseCases(
     private val getTop100ClubsUseCase: NetworkingUseCase<GenType, LeaderboardType, String?, List<ClubSchemaTop100>>,
     private val searchClubUc: NetworkingUseCase<GenType, LeaderboardType, String, List<ClubSchemaSearchByName>>,
     private val getClubCrestAssetByIdUseCase: NetworkingUseCase<String, Unit?, Unit?, String>,
+    private val getClubOverallStatsUseCase: GetClubOverallStatsUseCase
 ) : RemoteUseCases {
     override suspend fun getTop100(
         genType: GenType,
@@ -31,6 +35,13 @@ class EaDBUseCases(
     override suspend fun getClubCrestByID(id: String?): String {
         return getClubCrestAssetByIdUseCase(p = id)
 
+    }
+
+    override suspend fun getClubOverallStats(
+        genType: GenType,
+        id: Int
+    ): Result<SchemaOverallStat, Error> {
+        return getClubOverallStatsUseCase(genType, id)
     }
 
 }

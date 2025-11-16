@@ -71,7 +71,7 @@ object ClubsApi {
 
 
     fun buildClubOverallStatsUrl(
-        genType: GenType, clubIds: List<Long>
+        genType: GenType, clubIds: List<Int>
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)

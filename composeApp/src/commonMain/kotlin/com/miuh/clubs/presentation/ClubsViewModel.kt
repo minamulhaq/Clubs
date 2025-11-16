@@ -1,6 +1,7 @@
 package com.miuh.clubs.presentation
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.traceEventEnd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
@@ -9,6 +10,7 @@ import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
 import com.miuh.clubs.core.data.schema.toDisplayData
 import com.miuh.clubs.core.data.schema.toEntity
+import com.miuh.clubs.core.util.Result
 import com.miuh.clubs.domain.uc.local_db_uc.LocalDbUseCases
 import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
 import com.miuh.clubs.presentation.screens.home_screen.HomeScreenEvent
@@ -26,7 +28,7 @@ class ClubsViewModel(
     private val localUseCases: LocalDbUseCases,
     private val remoteUseCases: RemoteUseCases
 ) : ViewModel() {
-    private val logger = Logger.withTag(ClubsViewModel::class.simpleName.toString())
+    private val logger = Logger.withTag(this::class.simpleName.toString())
 
 
     private val _currentlySelectedGen = mutableStateOf(GenType.GEN5)
@@ -104,6 +106,23 @@ class ClubsViewModel(
             }
 
             is HomeScreenEvent.ToClubDetailsScreenClubEvent -> {
+                viewModelScope.launch {
+                    val stats = remoteUseCases.getClubOverallStats(
+                        genType = GenType.GEN5,
+                        id = event.club.clubId.toInt()
+                    )
+                    when (stats){
+                        is Result.Error<*> -> {
+                            logger.e { stats.error.toString()}
+                        }
+                        is Result.Success<*> -> {
+                            logger.d {
+                                "Stats: ${stats.data}"
+                            }
+                        }
+                    }
+
+                }
 
             }
         }
