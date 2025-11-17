@@ -1,5 +1,4 @@
 package com.miuh.clubs.ui.common
-
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -16,123 +15,198 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.stylusHoverIcon
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextMotion
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.miuh.clubs.ui.theme.backgroundDark
+import com.miuh.clubs.ui.theme.backgroundLight
+import com.miuh.clubs.ui.theme.onPrimaryLight
+import com.miuh.clubs.ui.theme.onSurfaceLight
+import com.miuh.clubs.ui.theme.primaryLight
+import com.miuh.clubs.ui.theme.surfaceLight
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-
 @Composable
-fun LoadingAnimation(
-    modifier: Modifier = Modifier
-) {
-    // Embedded Advice: Use MaterialTheme colors and shapes for consistency.
-    val themePrimary = MaterialTheme.colorScheme.primary
-    val themeSurface = MaterialTheme.colorScheme.surface
-    val themeOnPrimary = MaterialTheme.colorScheme.onPrimary
+fun LoadingAnimation(modifier: Modifier = Modifier) {
+    /* --------------------------------------------------------------------- */
+    /* 1.  Theming helpers (pick surface / primary from your palette)        */
+    /* --------------------------------------------------------------------- */
+    val surface = MaterialTheme.colorScheme.surface
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val primary = MaterialTheme.colorScheme.primary
 
-    // Use a Backdrop Surface/Box that is clickable = false to consume touches when loading.
+    /* --------------------------------------------------------------------- */
+    /* 2.  Animations                                                        */
+    /* --------------------------------------------------------------------- */
+    val infinite = rememberInfiniteTransition(label = "loader")
+
+    // 2a. Rotation of the 3 segments
+    val rotation by infinite.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1_400, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+
+    // 2b. Elastic scale on the whole card
+    val scale by infinite.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scale"
+    )
+
+    // 2c. Shimmer gradient offset for the text
+    val shimmer by infinite.animateFloat(
+        initialValue = -2f,
+        targetValue = 2f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1_800, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer"
+    )
+
+    /* --------------------------------------------------------------------- */
+    /* 3.  Glass card (blur + tint)                                          */
+    /* --------------------------------------------------------------------- */
+    val glassTint = if (MaterialTheme.colorScheme.background == Color(0xFF111318)) {
+        // dark
+        Color.White.copy(alpha = .06f)
+    } else {
+        // light
+        Color.Black.copy(alpha = .05f)
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* 4.  Layout                                                            */
+    /* --------------------------------------------------------------------- */
     Surface(
-        modifier = modifier
-            .fillMaxSize()
-            // Using surface color for a better look; backgroundDark is likely a fixed color.
-            .background(themeSurface),
-        color = themeSurface // Explicitly set Surface color if needed
+        modifier = modifier.fillMaxSize(),
+        color = Color.Transparent
     ) {
-        val infiniteTransition = rememberInfiniteTransition(label = "RotationTransition")
-
-        // 1. IMPROVEMENT: Animate the rotation angle for the dynamic arc.
-        val angle by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 360f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1200, easing = LinearEasing), // Faster rotation is often better
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "AngleAnimation"
-        )
-
-        // 2. IMPROVEMENT: Animate a scaling factor for a 'pulsing' effect on the text/base.
-        val scale by infiniteTransition.animateFloat(
-            initialValue = 0.9f,
-            targetValue = 1.0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(600, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "ScaleAnimation"
-        )
-
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            // 3. REFACTOR: Use a reasonably sized modifier for the animation container.
-            val animationSize = 120.dp
-
-            Box(
+        Box(contentAlignment = Alignment.Center) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .size(animationSize * 3) // Make the surrounding box large enough for touch area
+                    .graphicsLayer(scaleX = scale, scaleY = scale)
                     .padding(24.dp)
-                    .graphicsLayer(scaleX = scale, scaleY = scale) // Apply the pulsing scale animation
-            ) {
-                // Background Circle (Stationary Track)
-                Canvas(
-                    modifier = Modifier
-                        .matchParentSize() // Use all available space
-                        .align(Alignment.Center),
-                    onDraw = {
-                        drawCircle(
-                            color = themePrimary.copy(alpha = 0.2f), // Lighter, themed background track
-                            style = Stroke(width = 8f)
-                        )
-                    }
-                )
-
-                // Rotating Arc (The actual loader)
-                Canvas(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .align(Alignment.Center)
-                        .rotate(angle) // 4. CRITICAL FIX: Rotate the Canvas modifier
-                    ,
-                    onDraw = {
-                        drawArc(
-                            color = themePrimary, // Use theme primary color
-                            style = Stroke(
-                                width = 10f, // Thicker stroke
-                                cap = StrokeCap.Round
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(glassTint)          // tint
+                    .drawWithContent {                // blur
+                        drawContent()
+                        drawRect(
+                            Brush.verticalGradient(
+                                0f to glassTint,
+                                1f to glassTint
                             ),
-                            startAngle = 270f, // Start at the top (better visual)
-                            sweepAngle = 90f, // Maintain a sweep angle (360/4f)
-                            useCenter = false
+                            blendMode = BlendMode.SrcOver
                         )
                     }
-                )
+                    .padding(horizontal = 32.dp, vertical = 24.dp)
+            ) {
+                /* ------------------------------------------------------------- */
+                /* 4a. Spinner                                                   */
+                /* ------------------------------------------------------------- */
+                Box(Modifier.size(80.dp), contentAlignment = Alignment.Center) {
+                    Canvas(Modifier.matchParentSize()) {
+                        val stroke = 7f
+                        val radius = size.minDimension / 2 - stroke
+                        val segment = 90f                 // length of each arc
+                        val gap = 20f                     // gap between arcs
+                        val alpha = { idx: Int ->
+                            // fade-in / fade-out while travelling
+                            val pos = (rotation + idx * (segment + gap)) % 360f
+                            when {
+                                pos < 180 -> pos / 180f
+                                else -> 2 - pos / 180f
+                            }.coerceIn(0f, 1f)
+                        }
 
-                // Loading Text (Centered)
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    text = "Loading...",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = themePrimary,
-                    )
-                )
+                        for (i in 0..2) {
+                            drawArc(
+                                color = primary.copy(alpha = alpha(i)),
+                                startAngle = rotation + i * (segment + gap),
+                                sweepAngle = segment,
+                                useCenter = false,
+                                topLeft = Offset(
+                                    x = center.x - radius,
+                                    y = center.y - radius
+                                ),
+                                size = Size(radius * 2, radius * 2),
+                                style = Stroke(width = stroke, cap = StrokeCap.Round)
+                            )
+                        }
+                    }
+                }
+
+//                Spacer(Modifier.height(16.dp))
+//
+//                /* ------------------------------------------------------------- */
+//                /* 4b. Shimmer text                                              */
+//                /* ------------------------------------------------------------- */
+//                val shimmerColors = listOf(
+//                    onSurface.copy(alpha = .25f),
+//                    onSurface.copy(alpha = .90f),
+//                    onSurface.copy(alpha = .25f)
+//                )
+//
+//                // travelling gradient
+//                val brush by remember(shimmer) {
+//                    derivedStateOf {
+//                        Brush.linearGradient(
+//                            colors = shimmerColors,
+//                            start = Offset(shimmer * 200f, 0f),   // 200f ≈ text width
+//                            end = Offset(shimmer * 200f + 200f, 0f),
+//                            tileMode = TileMode.Clamp
+//                        )
+//                    }
+//                }
+//
+//                Text(
+//                    text = "Loading …",
+//                    style = MaterialTheme.typography.titleMedium,
+//                    modifier = Modifier
+//                        .drawWithContent {
+//                            drawContent()
+//                            drawRect(brush = brush, blendMode = BlendMode.SrcIn)
+//                        },
+//                    color = onSurface
+//                )
             }
         }
     }

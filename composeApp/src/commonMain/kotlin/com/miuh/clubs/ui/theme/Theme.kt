@@ -2,8 +2,8 @@ package com.miuh.clubs.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -238,7 +238,14 @@ private val highContrastDarkColorScheme = darkColorScheme(
 
 @Immutable
 data class ColorFamily(
-    val color: Color, val onColor: Color, val colorContainer: Color, val onColorContainer: Color
+    val color: Color,
+    val onColor: Color,
+    val colorContainer: Color,
+    val onColorContainer: Color
+)
+
+val unspecified_scheme = ColorFamily(
+    Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
 @Composable
@@ -251,7 +258,9 @@ fun ClubsTheme(
     }
 
     MaterialTheme(
-        colorScheme = colorScheme, typography = AppTypography, content = content
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
     )
 }
 
