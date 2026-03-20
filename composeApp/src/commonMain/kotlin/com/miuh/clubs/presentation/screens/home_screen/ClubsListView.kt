@@ -27,6 +27,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun ClubsListView(
     modifier: Modifier = Modifier,
+    title: String,
+    emptyMessage: String = "No clubs found",
     clubs: List<ClubDisplayListData>,
     isBookmarked: (ClubDisplayListData) -> Boolean,
     onButtonClick: (HomeScreenEvent) -> Unit
@@ -40,9 +42,9 @@ fun ClubsListView(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Bookmarked Clubs")
+        Text(text = title)
         if (clubs.isEmpty()) {
-            Text(text = "No Bookmarked Clubs Found")
+            Text(text = emptyMessage)
         }
         LazyColumn {
             items(clubs) { club ->
@@ -88,6 +90,8 @@ fun ClubsListView(
 @Composable
 fun BookmarkedClubsSectionPreview() {
     ClubsListView(
+        title = "Bookmarked Clubs",
+        emptyMessage = "No Bookmarked Clubs Found",
         clubs = emptyList(),
         isBookmarked = { true },
         onButtonClick = {}

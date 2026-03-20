@@ -22,10 +22,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -46,7 +44,7 @@ fun SearchFilterRow(
     onLeaderBoardChanged: (LeaderboardType) -> Unit
 ) {
     var selectedTabIndex by rememberSaveable { mutableStateOf(LeaderboardType.ALL_TIME.ordinal) }
-    val searchText = mutableStateOf("")
+    var searchText by rememberSaveable { mutableStateOf("") }
 
     PrimaryTabRow(
         selectedTabIndex = selectedTabIndex,
@@ -74,9 +72,9 @@ fun SearchFilterRow(
                     println("KEY PRESSED ${it.key}")
                     true
                 },
-            value = searchText.value.trim(),
+            value = searchText.trim(),
             onValueChange = {
-                searchText.value = it
+                searchText = it
             },
             placeholder = { Text(text = "Search club...", fontSize = 10.sp) },
             trailingIcon = {
@@ -84,11 +82,11 @@ fun SearchFilterRow(
                     modifier = Modifier
                         .padding(end = 10.dp)
                 ) {
-                    if (searchText.value != "") {
+                    if (searchText != "") {
                         Icon(
                             modifier = Modifier
                                 .clickable(onClick = {
-                                    searchText.value = ""
+                                    searchText = ""
                                 }),
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Search"
@@ -99,7 +97,7 @@ fun SearchFilterRow(
                     Icon(
                         modifier = Modifier
                             .clickable(onClick = {
-                                clubSearchByName(searchText.value)
+                                clubSearchByName(searchText)
                             }),
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search Club"

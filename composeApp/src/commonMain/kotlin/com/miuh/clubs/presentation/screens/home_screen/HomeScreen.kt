@@ -63,6 +63,8 @@ fun HomeScreen(
             modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ClubsListView(
+                title = "Bookmarked Clubs",
+                emptyMessage = "No Bookmarked Clubs Found",
                 clubs = bookmarkedClubs,
                 isBookmarked = { club ->
                     bookmarkedClubs.any { c ->
@@ -72,7 +74,11 @@ fun HomeScreen(
                 onButtonClick = { event ->
                     viewModel.onEvent(event)
                 })
-            Text(text = "Top 100 Ratings")
+            Text(
+                text = "Top 100 Ratings",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 4.dp).fillMaxWidth()
+            )
             Row(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -114,6 +120,8 @@ fun HomeScreen(
                 )
             })
             ClubsListView(
+                title = "Top 100",
+                emptyMessage = "No clubs found",
                 clubs = clubs.value,
                 onButtonClick = { event ->
                     viewModel.onEvent(event)

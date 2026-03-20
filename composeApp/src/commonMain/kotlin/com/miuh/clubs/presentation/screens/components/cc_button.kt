@@ -4,13 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.miuh.clubs.ui.theme.inversePrimaryDark
-import com.miuh.clubs.ui.theme.inversePrimaryLight
-import com.miuh.clubs.ui.theme.primaryLightMediumContrast
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -23,21 +20,12 @@ fun CcButton(
 ) {
     Button(
         modifier = modifier, onClick = buttonOnClick,
-        colors =
-            ButtonDefaults.buttonColors(
-                when (bookmarked) {
-                    true -> primaryLightMediumContrast
-                    else -> inversePrimaryLight
-                }
-            )
-    ) {
-        Text(
-            text = buttonText,
-            color = when (bookmarked) {
-                true -> Color.White
-                else -> Color.Black
-            }
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (bookmarked == true) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = if (bookmarked == true) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer
         )
+    ) {
+        Text(text = buttonText)
     }
 }
 
