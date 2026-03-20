@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,13 +20,15 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
+import com.miuh.clubs.presentation.screens.components.CcButtons
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ClubActionModalBottomSheet(
     modifier: Modifier = Modifier,
     club: ClubDisplayListData,
-    okButton: @Composable (ClubDisplayListData) -> Unit
+    bookmarked: Boolean,
+    onButtonClick: (HomeScreenEvent) -> Unit
 ) {
     Column(
         modifier = modifier.padding(16.dp).fillMaxWidth(),
@@ -39,7 +40,6 @@ fun ClubActionModalBottomSheet(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            club
             SubcomposeAsyncImage(
                 model = club.crestImageUrl,
                 contentDescription = null,
@@ -52,10 +52,11 @@ fun ClubActionModalBottomSheet(
             Text(club.clubName, style = MaterialTheme.typography.titleLarge)
         }
         Spacer(Modifier.height(8.dp))
-        okButton(club)
-//        Button(onClick = { bookmarkClub(club) }) {
-//            Text("Bookmark club")
-//        }
+        CcButtons(
+            club = club,
+            bookmarked = bookmarked,
+            buttonOnClick = onButtonClick
+        )
 
     }
 }
@@ -65,11 +66,11 @@ fun ClubActionModalBottomSheet(
 fun ClubActionModalBottomSheetPreview(
 ) {
 
-    val club: ClubDisplayListData = ClubDisplayListData(
+    val club = ClubDisplayListData(
         clubId = "2009",
         clubName = "Gulagis",
         skillRating = "2004",
         crestImageUrl = "https://eafc24.content.easports.com/fifa/fltOnlineAssets/24B23FDE-7835-41C2-87A2-F453DFDB2E82/2024/fcweb/crests/256x256/l99161123.png"
     )
-    ClubActionModalBottomSheet(club = club , okButton = {})
+    ClubActionModalBottomSheet(club = club, bookmarked = true, onButtonClick = {})
 }

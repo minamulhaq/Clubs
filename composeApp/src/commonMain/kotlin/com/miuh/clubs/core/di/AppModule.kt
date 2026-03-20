@@ -3,22 +3,21 @@ package com.miuh.clubs.core.di
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import coil3.ImageLoader
-import coil3.PlatformContext
-import coil3.disk.DiskCache
-import coil3.memory.MemoryCache
-import coil3.request.CachePolicy
-import coil3.util.DebugLogger
 import com.miuh.clubs.core.data.GenType
-import com.miuh.clubs.core.data.KtorClubsRepository
+import com.miuh.clubs.core.data.KtorClubsRemoteRepository
 import com.miuh.clubs.core.data.LeaderboardType
+import com.miuh.clubs.core.data.db.local.ClubDao
 import com.miuh.clubs.core.data.db.local.ClubsDatabase
+import com.miuh.clubs.core.data.domain.uc.remote.EaDBUseCases
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
-import com.miuh.clubs.domain.ClubsRepository
-import com.miuh.clubs.domain.uc.networking_uc.GetClubCrestAssetByIdUseCase
-import com.miuh.clubs.domain.uc.networking_uc.GetTop100ClubsUseCase
-import com.miuh.clubs.domain.uc.networking_uc.NetworkingUseCase
-import com.miuh.clubs.domain.uc.networking_uc.SearchClubByNameUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
+import com.miuh.clubs.core.data.domain.uc.remote.GetClubCrestAssetByIdUseCase
+import com.miuh.clubs.core.data.domain.uc.remote.GetClubOverallStatsUseCase
+import com.miuh.clubs.core.data.domain.uc.remote.GetTop100ClubsUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.NetworkingUseCase
+import com.miuh.clubs.domain.uc.remote_db_uc.RemoteUseCases
+import com.miuh.clubs.core.data.domain.uc.remote.SearchClubByNameUseCase
 import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.Auth
@@ -32,7 +31,6 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.serialization.json.Json
-import okio.FileSystem
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -47,6 +45,7 @@ expect fun Scope.createImageLoader(): ImageLoader
 val Top100ClubsUc = named("Top100ClubsUc")
 val SearchClubByName = named("SearchClubByName")
 val GetClubCrestImage = named("GetClubCrestImage")
+val GetClubOverallStats = named("GetClubOverallStats")
 
 
 val appModule = module {
@@ -70,8 +69,8 @@ val appModule = module {
     }
 
 
-    factory<ClubsRepository> {
-        KtorClubsRepository(get())
+    factory<ClubsRemoteRepository> {
+        KtorClubsRemoteRepository(get())
 
     }
 
@@ -93,17 +92,27 @@ val appModule = module {
         GetClubCrestAssetByIdUseCase(get())
     }
 
+    single<GetClubOverallStatsUseCase>(GetClubOverallStats) {
+        GetClubOverallStatsUseCase(repository = get())
+    }
+
     single<ImageLoader> {
         createImageLoader()
     }
 
     viewModel {
         ClubsViewModel(
-            top100uc = get(Top100ClubsUc),
+            localUseCases = get(),
+            remoteUseCases = get()
+        )
+    }
+
+    single<RemoteUseCases> {
+        EaDBUseCases(
             searchClubUc = get(SearchClubByName),
+            getTop100ClubsUseCase = get(Top100ClubsUc),
             getClubCrestAssetByIdUseCase = get(GetClubCrestImage),
-            imageLoader = get(),
-            clubsDb = get()
+            getClubOverallStatsUseCase = get(GetClubOverallStats)
         )
     }
 
@@ -116,4 +125,8 @@ val appModule = module {
 
     }
 
+    single<ClubDao> {
+        val dataBase: ClubsDatabase = get()
+        dataBase.clubsDao()
+    }
 }

@@ -5,7 +5,7 @@ import io.ktor.http.encodedPath
 import io.ktor.http.takeFrom
 
 enum class MatchType(val param: String) {
-    LEAGUE("leagueMatch"), PLAYOFF("playoffMatch")
+    LEAGUE("leagueMatch"), PLAYOFF("playoffMatch"), FRIENDLY("friendlyMatch")
 }
 
 enum class GenType {
@@ -71,7 +71,7 @@ object ClubsApi {
 
 
     fun buildClubOverallStatsUrl(
-        genType: GenType, clubIds: List<Long>
+        genType: GenType, clubIds: List<Int>
     ): String {
         return URLBuilder().apply {
             takeFrom(BASE_URL)
@@ -115,20 +115,6 @@ object ClubsApi {
             parameters.append("clubId", clubId.toString())
         }.buildString()
     }
-
-    fun buildClubMatchesUrl(
-        genType: GenType, clubIds: List<Long>, matchType: String, maxResultCount: Int = 1
-    ): String {
-        return URLBuilder().apply {
-            takeFrom(BASE_URL)
-            encodedPath = BASE_PATH + "clubs/matches"
-            parameters.append("platform", genType.platformParam())
-            parameters.append("clubIds", clubIds.joinToString(","))
-            parameters.append("matchType", matchType)
-            parameters.append("maxResultCount", maxResultCount.toString())
-        }.buildString()
-    }
-
 
     fun buildClubMatchesUrl(
         genType: GenType, clubIds: List<Long>, matchType: MatchType, maxResultCount: Int = 1

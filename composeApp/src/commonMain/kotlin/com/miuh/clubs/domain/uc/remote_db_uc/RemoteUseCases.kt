@@ -1,12 +1,15 @@
-package com.miuh.clubs.domain
+package com.miuh.clubs.domain.uc.remote_db_uc
 
 import com.miuh.clubs.core.data.GenType
 import com.miuh.clubs.core.data.LeaderboardType
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
+import com.miuh.clubs.core.data.schema.SchemaOverallStat
+import com.miuh.clubs.core.util.Error
+import com.miuh.clubs.core.util.Result
 
+interface RemoteUseCases {
 
-interface ClubsRepository {
     suspend fun getTop100(
         genType: GenType,
         leaderboardType: LeaderboardType,
@@ -20,8 +23,11 @@ interface ClubsRepository {
     ): List<ClubSchemaSearchByName>
 
 
-    suspend fun getClubCrestById(
-        crestID: String
-    ): String
+    suspend fun getClubCrestByID(id: String?): String
+
+    suspend fun getClubOverallStats(
+        genType: GenType,
+        id: Int
+    ): Result<SchemaOverallStat, Error>
 
 }

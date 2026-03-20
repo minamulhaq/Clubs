@@ -1,22 +1,27 @@
 package com.miuh.clubs.core.data
 
+import co.touchlab.kermit.Logger
 import com.miuh.clubs.core.data.schema.ClubSchemaSearchByName
 import com.miuh.clubs.core.data.schema.ClubSchemaTop100
+import com.miuh.clubs.core.data.schema.SchemaOverallStat
+import com.miuh.clubs.core.util.EaErrors
+import com.miuh.clubs.core.util.JsonParsingError
 import com.miuh.clubs.core.util.Error
+import com.miuh.clubs.core.util.NetworkError
 import com.miuh.clubs.core.util.Result
-import com.miuh.clubs.domain.ClubsRepository
+import com.miuh.clubs.domain.uc.remote_db_uc.ClubsRemoteRepository
+import com.miuh.clubs.presentation.ClubsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.util.reflect.TypeInfo
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import kotlin.reflect.typeOf
 
-class KtorClubsRepository(
+class KtorClubsRemoteRepository(
     val httpClient: HttpClient
-) : ClubsRepository {
+) : ClubsRemoteRepository {
 
+    private val logger = Logger.withTag(this::class.simpleName.toString())
 
     override suspend fun getTop100(
         genType: GenType, leaderboardType: LeaderboardType, clubName: String?
@@ -101,7 +106,8 @@ class KtorClubsRepository(
 
     override suspend fun getClubCrestById(crestID: String): String {
         val fullUrl = ClubsApi.buildClubCrestAssetUrl(crestID)
-        return fullUrl/*
+        return fullUrl
+        /*
         val r = NetworkResponseParser().safeCall<ByteArray> {
             httpClient.get(fullUrl).body()
         }
@@ -112,23 +118,31 @@ class KtorClubsRepository(
         }
          */
     }
+
+    override suspend fun getClubOverallStatsUseCase(
+        genType: GenType,
+        clubId: Int
+    ): Result<SchemaOverallStat, Error> {
+        val fullUrl: String =
+            ClubsApi.buildClubOverallStatsUrl(genType = genType, clubIds = listOf(clubId))
+        logger.d {
+            "Url is: $fullUrl"
+        }
+        val r = NetworkResponseParser().safeCall<List<SchemaOverallStat>> {
+            httpClient.get(fullUrl).body()
+        }
+        return when (r) {
+            is Result.Error<*> -> {
+                Result.Error(error = EaErrors.FAILED_TO_PARSE)
+            }
+
+            is Result.Success<*> -> {
+                val statsList: List<SchemaOverallStat> = r.data as List<SchemaOverallStat>
+                if (statsList.isEmpty()) {
+                    return Result.Error(error = EaErrors.EMPTY_RECORD)
+                }
+                return Result.Success(statsList.first())
+            }
+        }
+    }
 }
-
-
-/*
-Search the top100 clubs -
-
-filter = gentype
-filter2 = allTimeLeaderboard / currentSeasonLeaderboard
-
-https://proclubs.ea.com/api/fc/allTimeLeaderboard?platform=common-gen5
-https://proclubs.ea.com/api/fc/currentSeasonLeaderboard?platform=common-gen5
-
-https://proclubs.ea.com/api/fc/allTimeLeaderboard?platform=common-gen4
-https://proclubs.ea.com/api/fc/allTimeLeaderboard?platform=nx
-
-
-search club:
-https://proclubs.ea.com/api/fc/currentSeasonLeaderboard/search?platform=common-gen5&clubName=gulagis
-
- */

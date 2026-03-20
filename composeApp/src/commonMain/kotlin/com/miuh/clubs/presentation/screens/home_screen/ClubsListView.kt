@@ -1,8 +1,9 @@
 package com.miuh.clubs.presentation.screens.home_screen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -15,26 +16,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.BeyondBoundsLayout
-import com.miuh.clubs.core.data.db.local.ClubEntity
+import co.touchlab.kermit.Logger
 import com.miuh.clubs.core.data.schema.ClubDisplayListData
-import com.miuh.clubs.presentation.screens.components.CcButton
+import com.miuh.clubs.presentation.screens.components.CcButtonsEvent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookmarkedClubsSection(
+fun ClubsListView(
     modifier: Modifier = Modifier,
+    title: String,
+    emptyMessage: String = "No clubs found",
     clubs: List<ClubDisplayListData>,
-    onClubClicked: (ClubDisplayListData) -> Unit,
-    isBookmarked: (ClubDisplayListData) -> Boolean
-
+    isBookmarked: (ClubDisplayListData) -> Boolean,
+    onButtonClick: (HomeScreenEvent) -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-
     var clubToTakeActionOn by remember { mutableStateOf<ClubDisplayListData?>(null) }
 
     Column(
@@ -42,15 +42,18 @@ fun BookmarkedClubsSection(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Bookmarked Clubs")
+        Text(text = title)
         if (clubs.isEmpty()) {
-            Text(text = "No Bookmarked Clubs Found")
+            Text(text = emptyMessage)
         }
-        clubs.forEach { club ->
-            SingleClubDisplayRow(club = club, onClubClicked = {
-                clubToTakeActionOn = club
-                showBottomSheet = true
-            })
+        LazyColumn {
+            items(clubs) { club ->
+                SingleClubDisplayRow(club = club, onClubClicked = {
+                    clubToTakeActionOn = club
+                    showBottomSheet = true
+                })
+
+            }
         }
         val scope = rememberCoroutineScope()
 
@@ -64,15 +67,17 @@ fun BookmarkedClubsSection(
                     }
                 }
             ) {
-
                 ClubActionModalBottomSheet(
                     club = clubToTakeActionOn!!,
-                    okButton = {
-                        CcButton(
-                            buttonOnClick = {
-                            },
-                            bookmarked = isBookmarked(clubToTakeActionOn!!)
-                        )
+                    bookmarked = isBookmarked(clubToTakeActionOn!!),
+                    onButtonClick = { event ->
+                        when (event) {
+                            is HomeScreenEvent.ToClubDetailsScreenClubEvent -> showBottomSheet =
+                                false
+
+                            else -> Unit
+                        }
+                        onButtonClick(event)
                     }
                 )
             }
@@ -84,9 +89,11 @@ fun BookmarkedClubsSection(
 @Preview(showBackground = true)
 @Composable
 fun BookmarkedClubsSectionPreview() {
-    BookmarkedClubsSection(
-        clubs = emptyList(), onClubClicked = {}, isBookmarked = {
-            true
-        }
+    ClubsListView(
+        title = "Bookmarked Clubs",
+        emptyMessage = "No Bookmarked Clubs Found",
+        clubs = emptyList(),
+        isBookmarked = { true },
+        onButtonClick = {}
     )
 }

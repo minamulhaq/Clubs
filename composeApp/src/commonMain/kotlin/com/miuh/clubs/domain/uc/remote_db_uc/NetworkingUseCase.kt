@@ -1,4 +1,4 @@
-package com.miuh.clubs.domain.uc.networking_uc
+package com.miuh.clubs.domain.uc.remote_db_uc
 
 
 interface NetworkingUseCase<in P, in Q, in R, out T> {

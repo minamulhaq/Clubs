@@ -11,4 +11,5 @@ sealed interface HomeScreenEvent {
     class SearchClubByNameEvent(val clubName: String) : HomeScreenEvent
     class AddClubToBookmarksClubEvent(val club: ClubDisplayListData) : HomeScreenEvent
     class RemoveClubFromBookmarksClubEvent(val club: ClubDisplayListData) : HomeScreenEvent
+    class ToClubDetailsScreenClubEvent(val club: ClubDisplayListData) : HomeScreenEvent
 }

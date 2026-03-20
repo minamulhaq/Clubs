@@ -1,35 +1,76 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Pro Clubs Stats
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A multiplatform app for tracking EA Sports FC Pro Clubs statistics — leaderboards, club details, member careers, and match history, all in one place.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
-
-### Build and Run Android Application
-
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
-
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+Built with Kotlin Multiplatform and Compose Multiplatform, targeting Android, iOS, and Desktop from a single shared codebase.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## What it does
+
+- Browse the **Top 100 leaderboard** across current-gen, last-gen, and Switch platforms
+- Switch between **All Time** and **Current Season** rankings
+- **Search** for any club by name
+- View **detailed club stats** — wins, losses, goals, clean sheets, division finishes, win streaks, playoff achievements
+- See **member career stats** and recent match history
+- **Bookmark** clubs you care about so they're always at the top
+
+---
+
+## Tech stack
+
+| Layer | Library |
+|---|---|
+| UI | Compose Multiplatform 1.9.2 |
+| Networking | Ktor 3.3.1 |
+| Local DB | Room 2.8.3 |
+| DI | Koin 4.1.1 |
+| Image loading | Coil 3.3.0 |
+| Serialization | kotlinx.serialization 1.9.0 |
+| Navigation | Navigation Compose 2.9.1 |
+
+Kotlin 2.2.10 · min SDK 24 · targets Android, iOS (arm64 + simulator), Desktop JVM
+
+---
+
+## Project structure
+
+```
+composeApp/src/
+├── commonMain/        # All shared code
+│   ├── core/          # API client, DB, schemas, utilities
+│   ├── domain/        # Repository interfaces & use cases
+│   ├── presentation/  # ViewModels & screens
+│   ├── ui/            # Reusable components & theme
+│   └── navigation/    # Routes
+├── androidMain/       # Android entry point & platform specifics
+├── iosMain/           # iOS entry point
+└── jvmMain/           # Desktop entry point
+```
+
+Clean architecture — data, domain, and presentation are separated. The ViewModel talks only to use cases, never directly to the API or DB.
+
+---
+
+## Getting started
+
+**Prerequisites:** Android Studio Hedgehog or later with the Kotlin Multiplatform plugin installed.
+
+```bash
+git clone https://github.com/your-username/Clubs.git
+cd Clubs
+```
+
+Open the project in Android Studio and let Gradle sync. Then run on your target:
+
+- **Android** — select the `composeApp` run configuration and pick a device/emulator
+- **Desktop** — run `./gradlew :composeApp:run`
+- **iOS** — open `iosApp/iosApp.xcodeproj` in Xcode and run on a simulator or device
+
+No API keys needed. The app pulls data from the public EA Sports FC Pro Clubs API.
+
+---
+
+## Data source
+
+All stats come from the official EA Sports Pro Clubs API at `proclubs.ea.com`. The app does not store any data on a server — bookmarks are saved locally on your device using Room.
